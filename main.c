@@ -1,18 +1,6 @@
 #include <ncurses.h>
 
-void print(short i, short j, short color) {
-      attron(COLOR_PAIR(color));
-
-      mvprintw(i, j, "%i", 1);
-
-      attroff(COLOR_PAIR(color));
-
-      refresh();
-      napms(350);
-}
-
-int main (int argc, char *argv[])
-{
+void init() {
   initscr();
 
   start_color();
@@ -25,6 +13,29 @@ int main (int argc, char *argv[])
   refresh();
   napms(1000);
   clear();
+}
+
+void fillField(int rows, int colums) {
+  for (int i = 0; i < rows; i++) {
+    for (int j = 0; j < colums; j++) {
+      mvprintw(i, j, "%i", 0);
+    }
+  }
+  refresh();
+}
+
+void print(short i, short j, short color) {
+      attron(COLOR_PAIR(color));
+      mvprintw(i, j, "%i", 1);
+      attroff(COLOR_PAIR(color));
+
+      refresh();
+      napms(350);
+}
+
+int main (int argc, char *argv[])
+{
+  init();
 
   // int rows = 25; 
   // int colums = 80;
@@ -32,12 +43,7 @@ int main (int argc, char *argv[])
   int rows = 7; 
   int colums = 9;
 
-  for (int i = 0; i < rows; i++) {
-    for (int j = 0; j < colums; j++) {
-      mvprintw(i, j, "%i", 0);
-    }
-  }
-  refresh();
+  fillField(rows, colums);
 
   short numOfCircles = rows / 2;
 
