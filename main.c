@@ -19,8 +19,8 @@ int main (int argc, char *argv[])
   // int rows = 25; 
   // int colums = 80;
 
-  int rows = 5; 
-  int colums = 7;
+  int rows = 7; 
+  int colums = 9;
 
   for (int i = 0; i < rows; i++) {
     for (int j = 0; j < colums; j++) {
@@ -35,22 +35,23 @@ int main (int argc, char *argv[])
     mvprintw(10, 10, "%i", p);
 
     //to right
-    for (short j = numOfCircles; j < colums - numOfCircles + p; j++) {
-      print(numOfCircles - p, j);
+    for (short j = numOfCircles - p; j < colums - numOfCircles + p; j++) {
+      print(numOfCircles- p, j);
     }
 
     //to down
-    for (short i = numOfCircles + 1 - p; i < numOfCircles + 2 + p; i++) {
+    for (short i = numOfCircles + 1 - p; i < numOfCircles + 1 + p; i++) {
       print(i, colums - numOfCircles + p - 1);
     }
 
+    if (numOfCircles + 1 + p >= rows) break;
     //to left
-    for (short j = colums - numOfCircles - 2 + p; j > numOfCircles - 2 - p; j--) {
+    for (short j = colums - numOfCircles - 1 + p; j > numOfCircles - 2 - p; j--) {
       print(numOfCircles + 1 + p, j);
     }
 
     //to up
-    for (short i = numOfCircles + p; i > numOfCircles - 2 - p; i--) {
+    for (short i = numOfCircles + p; i > numOfCircles - 1 - p; i--) {
       print(i, numOfCircles - 1 - p);
     }
 
