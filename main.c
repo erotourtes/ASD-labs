@@ -1,7 +1,11 @@
 #include <ncurses.h>
 
-void print(short i, short j) {
+void print(short i, short j, short color) {
+      attron(COLOR_PAIR(color));
+
       mvprintw(i, j, "%i", 1);
+
+      attroff(COLOR_PAIR(color));
 
       refresh();
       napms(350);
@@ -10,6 +14,12 @@ void print(short i, short j) {
 int main (int argc, char *argv[])
 {
   initscr();
+
+  start_color();
+  init_pair(1, COLOR_BLACK, COLOR_BLUE);
+  init_pair(2, COLOR_BLACK, COLOR_GREEN);
+  init_pair(4, COLOR_BLACK, COLOR_MAGENTA);
+  init_pair(3, COLOR_BLACK, COLOR_YELLOW);
 
 	printw("Lab 1.6");	
   refresh();
@@ -36,23 +46,23 @@ int main (int argc, char *argv[])
 
     //to right
     for (short j = numOfCircles - p; j < colums - numOfCircles + p; j++) {
-      print(numOfCircles- p, j);
+      print(numOfCircles- p, j, 1);
     }
 
     //to down
     for (short i = numOfCircles + 1 - p; i < numOfCircles + 1 + p; i++) {
-      print(i, colums - numOfCircles + p - 1);
+      print(i, colums - numOfCircles + p - 1, 2);
     }
 
     if (numOfCircles + 1 + p >= rows) break;
     //to left
     for (short j = colums - numOfCircles - 1 + p; j > numOfCircles - 2 - p; j--) {
-      print(numOfCircles + 1 + p, j);
+      print(numOfCircles + 1 + p, j, 3);
     }
 
     //to up
     for (short i = numOfCircles + p; i > numOfCircles - 1 - p; i--) {
-      print(i, numOfCircles - 1 - p);
+      print(i, numOfCircles - 1 - p, 4);
     }
 
   }
