@@ -19,29 +19,39 @@ int main (int argc, char *argv[])
   // int rows = 25; 
   // int colums = 80;
 
-  int rows = 6; 
-  int colums = 6;
+  int rows = 5; 
+  int colums = 7;
 
-  for (short p = 0; p < 1; p++) {
+  for (int i = 0; i < rows; i++) {
+    for (int j = 0; j < colums; j++) {
+      mvprintw(i, j, "%i", 0);
+    }
+  }
+  refresh();
+
+  short numOfCircles = rows / 2;
+
+  for (short p = 0; p < numOfCircles + 1; p++) {
+    mvprintw(10, 10, "%i", p);
 
     //to right
-    for (short j = 0; j < colums; j++) {
-      print(0, j);
+    for (short j = numOfCircles; j < colums - numOfCircles + p; j++) {
+      print(numOfCircles - p, j);
     }
 
     //to down
-    for (short i = 1; i < rows; i++) {
-      print(i, colums - 1);
+    for (short i = numOfCircles + 1 - p; i < numOfCircles + 2 + p; i++) {
+      print(i, colums - numOfCircles + p - 1);
     }
 
     //to left
-    for (short j = colums - 1 - 1; j > 0; j--) {
-      print(rows - 1, j);
+    for (short j = colums - numOfCircles - 2 + p; j > numOfCircles - 2 - p; j--) {
+      print(numOfCircles + 1 + p, j);
     }
 
     //to up
-    for (short i = rows - 1; i > 0; i--) {
-      print(i, 0);
+    for (short i = numOfCircles + p; i > numOfCircles - 2 - p; i--) {
+      print(i, numOfCircles - 1 - p);
     }
 
   }
