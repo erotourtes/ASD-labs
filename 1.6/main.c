@@ -8,8 +8,8 @@ int main (int argc, char *argv[])
 {
   init();
 
-  int rows = 3; 
-  int colums = 15;
+  int rows = 13; 
+  int colums = 17;
 
   if (rows > colums) {
     printw("To work properly colums should be GREATER than rows");	
@@ -25,27 +25,29 @@ int main (int argc, char *argv[])
     numOfCircles--;
 
   for (short p = 0; p < numOfCircles + 1; p++) {
+    short i = numOfCircles - p;
+    short j = numOfCircles - p;
 
     //to right
-    for (short j = numOfCircles - p; j < colums - numOfCircles + p; j++) {
-      print(numOfCircles - p, j, 1);
+    for (; j < colums - numOfCircles + p; j++) {
+      print(i, j, 1);
     }
 
     //to down
-    for (short i = numOfCircles + 1 - p; i < numOfCircles + 1 + p; i++) {
-      print(i, colums - numOfCircles + p - 1, 2);
+    for (i += 1; i < numOfCircles + 1 + p; i++) {
+      print(i, j - 1, 2);
     }
 
-    if (numOfCircles + 1 + p >= rows) break;
+    if (i >= rows) break;
 
     //to left
-    for (short j = colums - numOfCircles + p - 1; j > numOfCircles - 2 - p; j--) {
-      print(numOfCircles + 1 + p, j, 3);
+    for (j-=1; j > numOfCircles - 2 - p; j--) {
+      print(i, j, 3);
     }
 
     //to up
-    for (short i = numOfCircles + p; i > numOfCircles - 1 - p; i--) {
-      print(i, numOfCircles - 1 - p, 4);
+    for (i -= 1; i > numOfCircles - 1 - p; i--) {
+      print(i, j + 1, 4);
     }
 
   }
@@ -86,5 +88,5 @@ void print(short i, short j, short color) {
       attroff(COLOR_PAIR(color));
 
       refresh();
-      napms(350);
+      napms(5);
 }
