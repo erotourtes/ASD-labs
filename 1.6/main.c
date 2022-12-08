@@ -9,8 +9,8 @@ int main (int argc, char *argv[])
 {
   init();
 
-  int rows = 13; 
-  int colums = 17;
+  int rows = 25; 
+  int colums = 80;
 
   warnIfNotOk(rows, colums);
   fillField(rows, colums);
@@ -78,7 +78,7 @@ void print(short i, short j, short color) {
       attroff(COLOR_PAIR(color));
 
       refresh();
-      napms(15);
+      napms(5);
 }
 
 void warnIfNotOk(short rows, short colums) {
