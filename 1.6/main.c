@@ -3,6 +3,7 @@
 void init(void); 
 void fillField(int, int);
 void print(short, short, short);
+void warnIfNotOk(short, short);
 
 int main (int argc, char *argv[])
 {
@@ -11,13 +12,7 @@ int main (int argc, char *argv[])
   int rows = 13; 
   int colums = 17;
 
-  if (rows > colums) {
-    printw("To work properly colums should be GREATER than rows");	
-    refresh();
-    getch();
-    clear();
-  }
-
+  warnIfNotOk(rows, colums);
   fillField(rows, colums);
 
   short numOfCircles = rows / 2;
@@ -83,5 +78,14 @@ void print(short i, short j, short color) {
       attroff(COLOR_PAIR(color));
 
       refresh();
-      napms(5);
+      napms(15);
+}
+
+void warnIfNotOk(short rows, short colums) {
+  if (rows > colums) {
+    printw("To work properly colums should be GREATER than rows");	
+    refresh();
+    getch();
+    clear();
+  }
 }
