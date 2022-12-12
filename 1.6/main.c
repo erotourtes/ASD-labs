@@ -19,26 +19,26 @@ int main (int argc, char *argv[])
   if (rows % 2 == 0)
     numOfCircles--;
 
+  short i = numOfCircles;
+  short j = numOfCircles - 1;
   for (short p = 0; p < numOfCircles + 1; p++) {
-    short i = numOfCircles - p;
-    short j = numOfCircles - p;
 
     //to right
-    for (; j < colums - numOfCircles + p; j++)
+    for (j++; j < colums - numOfCircles + p; j++)
       print(i, j, 1);
 
     //to down
-    for (i += 1; i < numOfCircles + 1 + p; i++)
+    for (i++; i < numOfCircles + 1 + p; i++)
       print(i, j - 1, 2);
 
     if (i >= rows) break;
 
     //to left
-    for (j-= 1; j > numOfCircles - 2 - p; j--)
+    for (j--; j > numOfCircles - 2 - p; j--)
       print(i, j, 3);
 
     //to up
-    for (i -= 1; i > numOfCircles - 1 - p; i--)
+    for (i--; i > numOfCircles - 1 - p; i--)
       print(i, j + 1, 4);
   }
   
