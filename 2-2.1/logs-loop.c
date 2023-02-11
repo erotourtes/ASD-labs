@@ -1,7 +1,7 @@
-#include <stdio.h>
 #include "./types.c"
+#include <stdio.h>
 
-double loop(double x, u32 n) {
+double logs_loop(double x, u32 n) {
   double res = x;
   double prev = x;
   printf("i: %*d;\t prev: %*lf; \tres: %*lf\n", 5, 1, 5, prev, 5, res);
