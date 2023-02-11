@@ -1,3 +1,4 @@
+#include <math.h>
 #include <stdio.h>
 
 typedef unsigned int u32;
@@ -57,8 +58,10 @@ int main() {
     return 1;
   }
 
+  printf("calc:      arsinh(%.2lf) = %*.7lf\n\n", x, 10, asinh(x));
   printf("loop:      arsinh(%.2lf) = %*.7lf\n\n", x, 10, logs_loop(x, n));
-  printf("recursion: arsinh(%.2lf) = %*.7lf\n\n", x, 10, logs_recursionMixed(x, n));
+  printf("recursion: arsinh(%.2lf) = %*.7lf\n\n", x, 10,
+         logs_recursionMixed(x, n));
 
   return 0;
 }
