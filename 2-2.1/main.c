@@ -4,6 +4,7 @@
 #include "./loop.c"
 #include "./recursionDepth.c"
 #include "./recursionHeight.c"
+#include "./recursionMixed.c"
 
 
 int main() {
@@ -17,9 +18,10 @@ int main() {
     return 1;
   }
 
-  printf("arsinh(%.2lf) = %*.7lf", x, 10, loop(x, n));
-  // printf("arsinh(%.2lf) = %*.7lf", x, 10, recursionDepth(x, n));
-  printf("arsinh(%.2lf) = %*.7lf", x, 10, recursionHeight(x, n));
+  printf("arsinh(%.2lf) = %*.7lf\n\n", x, 10, loop(x, n));
+  // printf("arsinh(%.2lf) = %*.7lf\n\n", x, 10, recursionDepth(x, n));
+  // printf("arsinh(%.2lf) = %*.7lf\n\n", x, 10, recursionHeight(x, n));
+  printf("arsinh(%.2lf) = %*.7lf\n\n", x, 10, recursionMixed(x, n));
 
   return 0;
 }
