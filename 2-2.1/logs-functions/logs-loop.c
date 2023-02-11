@@ -1,4 +1,4 @@
-#include "./types.c"
+#include "../utils/types.c"
 #include <stdio.h>
 
 double logs_loop(double x, u32 n) {

@@ -1,4 +1,4 @@
-#include "./types.c"
+#include "../utils/types.c"
 #include <stdio.h>
 
 double _logs_recursionMixed(double x, u32 n, u32 i, double prev) {
@@ -12,13 +12,16 @@ double _logs_recursionMixed(double x, u32 n, u32 i, double prev) {
     return 0;
   }
 
-  double current = prev * (-x * x * (2 * i - 1) * (2 * i - 1) / (4 * i * i + 2 * i));
+  double current =
+      prev * (-x * x * (2 * i - 1) * (2 * i - 1) / (4 * i * i + 2 * i));
 
-  printf("i: %*d;\t current: %*lf; \tres: %*lf\n", 5, i + 1, 5, current, 5, res);
+  printf("i: %*d;\t current: %*lf; \tres: %*lf\n", 5, i + 1, 5, current, 5,
+         res);
 
   res = current + _logs_recursionMixed(x, n, i + 1, current);
 
-  printf("i: %*d;\t current: %*lf; \tres: %*lf\n", 5, i + 1, 5, current, 5, res);
+  printf("i: %*d;\t current: %*lf; \tres: %*lf\n", 5, i + 1, 5, current, 5,
+         res);
 
   return res;
 }

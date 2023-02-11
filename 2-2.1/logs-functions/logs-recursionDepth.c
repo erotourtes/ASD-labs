@@ -1,4 +1,4 @@
-#include "./types.c"
+#include "../utils/types.c"
 #include <stdio.h>
 
 double _logs_recursionDepth(double x, u32 n, u32 i, double prev, double res) {

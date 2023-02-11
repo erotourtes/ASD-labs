@@ -1,5 +1,4 @@
-#include "./types.c"
-#include <stdio.h>
+#include "./utils/types.c"
 
 double _recursionMixed(double x, u32 n, u32 i, double prev) {
   if (n == i)

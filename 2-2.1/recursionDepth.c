@@ -1,5 +1,4 @@
-#include "./types.c"
-#include <stdio.h>
+#include "./utils/types.c"
 
 double _recursionDepth(double x, u32 n, u32 i, double prev, double res) {
   if (n == i)
