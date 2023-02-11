@@ -4,11 +4,11 @@ double _recursionHeight(double x, u32 n, double *res) {
   if (n == 0)
     return x;
 
-  double current = _recursionHeight(x, n - 1, res) *
+  double cur = _recursionHeight(x, n - 1, res) *
                    (-x * x * (2 * n - 1) * (2 * n - 1) / (4 * n * n + 2 * n));
-  *res = *res + current;
+  *res = *res + cur;
 
-  return current;
+  return cur;
 }
 
 double recursionHeight(double x, u32 n) {

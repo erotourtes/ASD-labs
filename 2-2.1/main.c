@@ -23,5 +23,7 @@ int main() {
   printf("arsinh(%.2lf) = %*.7lf\n\n", x, 10, logs_recursionHeight(x, n));
   printf("arsinh(%.2lf) = %*.7lf\n\n", x, 10, logs_recursionMixed(x, n));
 
+  compare();
+
   return 0;
 }

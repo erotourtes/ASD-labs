@@ -6,4 +6,6 @@
 #include "../recursionMixed.c"
 
 
-void compare() { asinh(0); }
+void compare() { 
+    asinh(0);
+}
