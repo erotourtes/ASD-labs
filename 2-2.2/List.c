@@ -1,7 +1,7 @@
 #include "./utils/print_color.c"
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
 
 typedef struct Node {
   unsigned int value;
@@ -45,7 +45,12 @@ void addNode(List *list, int value) {
 
 void print_list(List *list) {
   set_info_color();
-  if (list != NULL && list->head != NULL) {
+
+  if (list == NULL) {
+    printf("List is NULL\n");
+  } else if (list->head == NULL) {
+    printf("List is empty\n");
+  } else {
     Node *current = list->head;
 
     reset_color();
@@ -59,9 +64,10 @@ void print_list(List *list) {
       printf("%d-> ", current->value);
       current = current->next;
     }
+
+    printf("NULL\n");
   }
 
-  printf("NULL\n");
   reset_color();
 }
 
@@ -100,6 +106,15 @@ List *combine_lists_center(List **list1ptr, List **list2ptr) {
       slow = slow->next;
   }
 
+  // if the first list is empty
+  if (slow == NULL) {
+    List *newList = list2;
+    free(list1);
+    *list2ptr = NULL;
+    *list1ptr = NULL;
+
+    return newList;
+  }
 
   // slow will be in the middle of the list
   Node *tmp = slow->next;

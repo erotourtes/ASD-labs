@@ -16,7 +16,6 @@ int main() {
   print_list(s1);
   print_list(s2);
 
-
   printf("\nAfter combining\n\n");
 
   List *list = combine_lists_center(&s1, &s2);
