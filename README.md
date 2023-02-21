@@ -14,3 +14,6 @@
 ![woops smth went wrong](https://github.com/erotourtes/ASD-labs/blob/main/2-2.1/report/up.png)
 ![woops smth went wrong](https://github.com/erotourtes/ASD-labs/blob/main/2-2.1/report/down.png)
 ![woops smth went wrong](https://github.com/erotourtes/ASD-labs/blob/main/2-2.1/report/mixed.png)
+---
+#### 2.2
+![woops smth went wrong](https://github.com/erotourtes/ASD-labs/blob/main/2-2.2/report/report.png)
