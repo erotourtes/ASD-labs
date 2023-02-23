@@ -79,6 +79,8 @@ void free_list(List *list) {
     current = next;
   }
 
+  free(list);
+
   reset_color();
   printf("\n");
 }
