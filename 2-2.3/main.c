@@ -59,7 +59,7 @@ Point* get_coordinates(int n) {
 
     // Center
     points[n - 1].x = ((num_in_row - 1) * distance + (rest > 1 ? distance : 0)) / 2;
-    points[n - 1].y = ((num_in_row - 1) * distance + (rest > 2 ? distance : 0)) / 2;
+    points[n - 1].y = ((num_in_row - 1) * distance) / 2;
 
     // Top row;
     int cur_distance = distance;
@@ -80,13 +80,17 @@ Point* get_coordinates(int n) {
     }
 
     // Right column
+    cur_distance = distance;
+    if (rest == 2) {
+        cur_distance = distance * (num_in_row - 1) / (num_in_row);
+    }
     for (int i = 0; i < num_in_row - 1; i++) {
-        y += distance;
+        y += cur_distance;
         points[cur++] = (Point) {x, y};
     }
 
     if (rest == 2) {
-        y += distance;
+        y += cur_distance;
         points[cur++] = (Point) {x, y};
         rest--;
     }
@@ -114,7 +118,7 @@ Point* get_coordinates(int n) {
 
 void draw_graph(X11 app) {
     // 10
-    int n = 12;
+    int n = 14;
     Point *points = get_coordinates(n);
 
     int circle_radius = 20;
