@@ -7,7 +7,7 @@
 #define n4 9
 
 typedef struct {
-    int **matrix;
+    int **val;
     int n;
 } Matrix;
 
@@ -17,7 +17,7 @@ int **mulmr(double k, int **matrix, int n);
 
 void free_matrix(Matrix matrix);
 
-void print_matrix(int **matrix, int n);
+void print_matrix(Matrix matrix);
 
 Matrix get_boolean_matrix() {
     srand(2119);
@@ -52,14 +52,14 @@ int **mulmr(double k, int **matrix, int n) {
 
 void free_matrix(Matrix matrix) {
     for (int i = 0; i < matrix.n; i++)
-        free(matrix.matrix[i]);
-    free(matrix.matrix);
+        free(matrix.val[i]);
+    free(matrix.val);
 }
 
-void print_matrix(int **matrix, int n) {
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-            printf("%d ", matrix[i][j]);
+void print_matrix(Matrix matrix) {
+    for (int i = 0; i < matrix.n; i++) {
+        for (int j = 0; j < matrix.n; j++) {
+            printf("%d ", matrix.val[i][j]);
         }
         printf("\n");
     }

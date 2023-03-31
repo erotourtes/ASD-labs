@@ -1,8 +1,8 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
-#define width 300
-#define height 300
+#define width 500
+#define height 400
 
 typedef struct {
     Display *dis;
@@ -36,7 +36,6 @@ void close_window(X11 app) {
     XFreeGC(app.dis, app.gc);
     XDestroyWindow(app.dis, app.win);
     XCloseDisplay(app.dis);
-    exit(0);
 }
 
 void redraw(X11 app) {
