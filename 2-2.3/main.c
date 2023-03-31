@@ -5,9 +5,10 @@
 #include <math.h>
 
 #include "./app.c"
+#include "./matrix.c"
 #include "./graph_coords.c"
 
-void draw_graph(X11 app);
+void draw_graph(X11 app, Matrix matrix);
 
 int main() {
     X11 app = init("Lab #3");
@@ -16,8 +17,9 @@ int main() {
     KeySym key;
     char text[255];
 
-    short running = 1;
+    Matrix matrix = get_boolean_matrix();
 
+    short running = 1;
     while (running) {
         XNextEvent(app.dis, &event);
         // Expose event
@@ -29,21 +31,20 @@ int main() {
             if (text[0] == 'q') {
                 running = 0;
             } else {
-                draw_graph(app);
+                draw_graph(app, matrix);
             }
         }
     }
 
     close_window(app);
+    free_matrix(matrix);
+    printf("Bye!");
     return 0;
 }
 
 
-
-void draw_graph(X11 app) {
-    // 10
-    int n = 16;
-    Point *points = get_coordinates(n, 100);
+void draw_graph(X11 app, Matrix matrix) {
+    Point *points = get_coordinates(matrix.n, 100);
 
     int circle_radius = 20;
     int offset = 100;
@@ -54,25 +55,19 @@ void draw_graph(X11 app) {
     unsigned long blue = 0x3200FF;
     unsigned long dark = 0x141405;
 
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < matrix.n; i++) {
         XSetForeground(app.dis, app.gc, blue);
 
-        XFillArc(app.dis, app.win, app.gc, points[i].x - circle_radius + offset, points[i].y - circle_radius + offset, circle_radius * 2, circle_radius * 2, 0, 360 * 64);
+        XFillArc(app.dis, app.win, app.gc, points[i].x - circle_radius + offset, points[i].y - circle_radius + offset,
+                 circle_radius * 2, circle_radius * 2, 0, 360 * 64);
 
-//        XSetForeground(app.dis, app.gc, dark);
-//        char name = (char)graph[current++];
-//        XDrawString(app.dis, app.win, app.gc, 100 * i - ch_x_offset, 100 + ch_y_offset, &name, 1);
+        XSetForeground(app.dis, app.gc, dark);
+        char name[2];
+        sprintf(name, "%d", i + 1);
+        XDrawString(app.dis, app.win, app.gc, points[i].x - ch_x_offset + offset, points[i].y + ch_y_offset + offset, &name, (i < 9 ? 1 : 2));
     }
 
     free(points);
-
-    // to bottom
-//    for (int i = 1; i <= num_in_row; i++) {
-//        XFillArc(app.dis, app.win, app.gc, 100 * (num_in_row + rest + 1) - circle_radius, 100 * i - circle_radius, circle_radius * 2, circle_radius * 2, 0, 360 * 64);
-//    }
-
-    // to left
-    // to top
 
 //    XDrawLine(app.dis, app.win, app.gc, 0, 0, 100, 100);
 //    XDrawLine(app.dis, app.win, app.gc, nx[0], ny[0], nx[1], ny[1]);
