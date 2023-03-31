@@ -4,17 +4,10 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include "./App.c"
+#include "./app.c"
+#include "./graph_coords.c"
 
 void draw_graph(X11 app);
-
-
-typedef struct {
-    int x;
-    int y;
-} Point;
-
-Point* get_coordinates(int n);
 
 int main() {
     X11 app = init("Lab #3");
@@ -45,81 +38,12 @@ int main() {
     return 0;
 }
 
-Point* get_coordinates(int n) {
-    Point *points = malloc(n * sizeof(Point));
-    int distance = 100;
 
-    int k = n - 1; // number of points without center
-    int num_in_row = floor((k + 4) / 4);
-    int rest = k - (num_in_row * 4 - 4);
-    int cur = 0;
-
-    int x = -distance;
-    int y = 0;
-
-    // Center
-    points[n - 1].x = ((num_in_row - 1) * distance + (rest > 1 ? distance : 0)) / 2;
-    points[n - 1].y = ((num_in_row - 1) * distance) / 2;
-
-    // Top row;
-    int cur_distance = distance;
-    if (rest == 1) {
-        cur_distance = distance * (num_in_row - 1) / (num_in_row);
-        x = -cur_distance;
-    }
-
-    for (int i = 0; i < num_in_row; i++) {
-        x += cur_distance;
-        points[cur++] = (Point) {x, y};
-    }
-
-    if (rest > 0) {
-        x += cur_distance;
-        points[cur++] = (Point) {x, y};
-        rest--;
-    }
-
-    // Right column
-    cur_distance = distance;
-    if (rest == 2) {
-        cur_distance = distance * (num_in_row - 1) / (num_in_row);
-    }
-    for (int i = 0; i < num_in_row - 1; i++) {
-        y += cur_distance;
-        points[cur++] = (Point) {x, y};
-    }
-
-    if (rest == 2) {
-        y += cur_distance;
-        points[cur++] = (Point) {x, y};
-        rest--;
-    }
-
-    // Bottom row
-    for (int i = 0; i < num_in_row - 1; i++) {
-        x -= distance;
-        points[cur++] = (Point) {x, y};
-    }
-
-    if (rest == 1) {
-        x -= distance;
-        points[cur++] = (Point) {x, y};
-        rest--;
-    }
-
-    // Left column
-    for (int i = 0; i < num_in_row - 2; i++) {
-        y -= distance;
-        points[cur++] = (Point) {x, y};
-    }
-
-    return points;
-}
 
 void draw_graph(X11 app) {
     // 10
-    int n = 14;
-    Point *points = get_coordinates(n);
+    int n = 16;
+    Point *points = get_coordinates(n, 100);
 
     int circle_radius = 20;
     int offset = 100;
