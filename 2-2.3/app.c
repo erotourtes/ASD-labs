@@ -17,7 +17,7 @@ void close_window(X11 app);
 
 void redraw(X11 app);
 
-X11 init(char* prog_name) {
+X11 init(char *prog_name) {
     Display *dis = XOpenDisplay((char *) 0);
     int screen = DefaultScreen(dis);
     Window win = XCreateSimpleWindow(dis, DefaultRootWindow(dis), 0, 0, width, height, 5, 0, WhitePixel(dis, screen));
@@ -42,16 +42,16 @@ void redraw(X11 app) {
     XClearWindow(app.dis, app.win);
 };
 
-void draw_arrow(float grad, int x, int y, X11 app) {
-    float fi = M_PI / 180.0 * (180.0 - grad) ;
+void draw_head_arrow(X11 app, Point p, float deg) {
+    float fi = M_PI / 180.0 * (180.0 - deg);
     float arrow_angle = 0.3;
     int len = 15;
 
-    int lx = x + len * cos(fi + arrow_angle);
-    int rx = x + len * cos(fi - arrow_angle);
-    int ly = y + len * sin(fi + arrow_angle);
-    int ry = y + len * sin(fi - arrow_angle);
+    int lx = p.x + len * cos(fi + arrow_angle);
+    int rx = p.x + len * cos(fi - arrow_angle);
+    int ly = p.y + len * sin(fi + arrow_angle);
+    int ry = p.y + len * sin(fi - arrow_angle);
 
-    XDrawLine(app.dis, app.win, app.gc, lx, ly, x, y);
-    XDrawLine(app.dis, app.win, app.gc, rx, ry, x, y);
+    XDrawLine(app.dis, app.win, app.gc, lx, ly, p.x, p.y);
+    XDrawLine(app.dis, app.win, app.gc, rx, ry, p.x, p.y);
 }

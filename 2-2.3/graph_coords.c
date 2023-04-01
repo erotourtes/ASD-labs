@@ -1,8 +1,3 @@
-typedef struct {
-    double x;
-    double y;
-} Point;
-
 void top_row(int num_in_row, Point *cur_point, Point *points, double distance, int *cur, int rest);
 
 void right_column(int num_in_row, Point *cur_point, Point *points, int distance, int *cur, int rest);
