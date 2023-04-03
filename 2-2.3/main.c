@@ -1,6 +1,7 @@
 // You need to install X11 library (sudo dnf install libX11-devel)
 
 #include <stdio.h>
+#include <math.h>
 
 #include "./Point.h"
 #include "./app.c"
@@ -16,9 +17,6 @@ int main() {
     char text[255];
 
     Matrix matrix = get_boolean_matrix();
-    matrix.val[0][3] = 1;
-    matrix.val[6][7] = 1;
-    matrix.val[10][0] = 1;
     print_matrix(matrix);
 
     while (1) {
