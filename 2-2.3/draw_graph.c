@@ -5,7 +5,7 @@ void applyOffset(Point *points, int n, int offset) {
     }
 }
 
-void draw_nodes_names(X11 app, Point *points, int len, int circle_radius, unsigned long bg, unsigned long fg) {
+void draw_nodes(X11 app, Point *points, int len, int circle_radius, unsigned long bg, unsigned long fg) {
     int ch_x_offset = 3;
     int ch_y_offset = 5;
 
@@ -23,15 +23,15 @@ void draw_nodes_names(X11 app, Point *points, int len, int circle_radius, unsign
     }
 }
 
-int in_range(int x, int a, int b) {
-    return a < x && x < b || b < x && x < a;
-}
-
-int through_center(Point *p, int i, int j, int n) {
+int is_through_center(Point *p, int i, int j, int n) {
     Point p1 = p[i];
     Point p2 = p[j];
     Point center = p[n - 1];
     return (p1.x + p2.x) / 2 == center.x && (p1.y + p2.y) / 2 == center.y;
+}
+
+int in_range(int x, int a, int b) {
+    return a < x && x < b || b < x && x < a;
 }
 
 int is_overlapping(Point *points, int n, int i, int j) {
@@ -99,7 +99,7 @@ void draw_arrow_line(X11 app, Point p1, Point p2, double circle_radius) {
     XDrawLine(app.dis, app.win, app.gc, p1.x, p1.y, p2.x, p2.y);
 }
 
-void draw_through_center(X11 app, Point *points, int i, int j, int circle_radius) {
+void draw_through_angle(X11 app, Point *points, int i, int j, int circle_radius) {
     int mid_x = (points[i].x + points[j].x) / 2;
     int mid_y = (points[i].y + points[j].y) / 2;
 
@@ -138,7 +138,6 @@ void draw_row_overlap(X11 app, Point *points, int i, int j, int circle_radius) {
         offset *= -1;
 
     Point middle = {mid_x, points[i].y + offset};
-
     XDrawLine(app.dis, app.win, app.gc, points[i].x, points[i].y, middle.x, middle.y);
     draw_arrow_line(app, middle, points[j], circle_radius);
 }
@@ -153,17 +152,17 @@ void draw_column_overlap(X11 app, Point *points, int i, int j, int circle_radius
         offset *= -1;
 
     Point middle = {points[i].x + offset, mid_y};
-
     XDrawLine(app.dis, app.win, app.gc, points[i].x, points[i].y, middle.x, middle.y);
     draw_arrow_line(app, middle, points[j], circle_radius);
 }
 
 void draw_overlapping(X11 app, Point *points, int i, int j, int circle_radius) {
-    if (points[i].y == points[j].y) {
+    if (points[i].y == points[j].y)
         draw_row_overlap(app, points, i, j, circle_radius);
-    } else if (points[i].x == points[j].x) {
+    else if (points[i].x == points[j].x)
         draw_column_overlap(app, points, i, j, circle_radius);
-    }
+    else
+        draw_through_angle(app, points, i, j, circle_radius);
 }
 
 void draw_graph(X11 app, Matrix matrix) {
@@ -181,19 +180,18 @@ void draw_graph(X11 app, Matrix matrix) {
         for (int j = 0; j < matrix.n; j++) {
             if (matrix.val[i][j] == 0) continue;
 
-            if (i == j) {
+            if (i == j)
                 draw_loop(app, circle_radius, (Point) {points[i].x, points[i].y});
-            } else if (through_center(points, i, j, matrix.n)) {
-                draw_through_center(app, points, i, j, circle_radius);
-            } else if (is_overlapping(points, matrix.n, i, j) || is_arrows_overlaps(matrix, i, j)) {
+            else if (is_through_center(points, i, j, matrix.n))
+                draw_through_angle(app, points, i, j, circle_radius);
+            else if (is_overlapping(points, matrix.n, i, j) || is_arrows_overlaps(matrix, i, j))
                 draw_overlapping(app, points, i, j, circle_radius);
-            } else {
+            else
                 draw_arrow_line(app, points[i], points[j], circle_radius);
-            }
         }
     }
 
-    draw_nodes_names(app, points, matrix.n, circle_radius, blue, dark);
+    draw_nodes(app, points, matrix.n, circle_radius, blue, dark);
 
     free(points);
 }
