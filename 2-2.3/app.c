@@ -55,3 +55,20 @@ void draw_head_arrow(X11 app, Point p, float deg) {
     XDrawLine(app.dis, app.win, app.gc, lx, ly, p.x, p.y);
     XDrawLine(app.dis, app.win, app.gc, rx, ry, p.x, p.y);
 }
+
+void draw_arrow_line(X11 app, Point p1, Point p2, double circle_radius) {
+    double dy = -(p2.y - p1.y);
+    double dx = (p2.x - p1.x);
+    double angle = atan(dy / dx);
+
+    int to_left = p1.x > p2.x; // to left (left top; left bottom)
+    if (to_left) {
+        Point p = {p2.x + circle_radius * cos(angle), p2.y - circle_radius * sin(angle)};
+        draw_head_arrow(app, p, 180 + angle * 180 / M_PI);
+    } else { // to right (right top; right bottom) && top && bottom
+        Point p = {p2.x - circle_radius * cos(angle), p2.y + circle_radius * sin(angle)};
+        draw_head_arrow(app, p, angle * 180 / M_PI);
+    }
+
+    XDrawLine(app.dis, app.win, app.gc, p1.x, p1.y, p2.x, p2.y);
+}
