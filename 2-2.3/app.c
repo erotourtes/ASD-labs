@@ -31,7 +31,6 @@ X11 init(char *prog_name) {
     return (X11) {dis, screen, win, gc};
 }
 
-
 void close_window(X11 app) {
     XFreeGC(app.dis, app.gc);
     XDestroyWindow(app.dis, app.win);
@@ -41,34 +40,3 @@ void close_window(X11 app) {
 void redraw(X11 app) {
     XClearWindow(app.dis, app.win);
 };
-
-void draw_head_arrow(X11 app, Point p, float deg) {
-    float fi = M_PI / 180.0 * (180.0 - deg);
-    float arrow_angle = 0.3;
-    int len = 15;
-
-    int lx = p.x + len * cos(fi + arrow_angle);
-    int rx = p.x + len * cos(fi - arrow_angle);
-    int ly = p.y + len * sin(fi + arrow_angle);
-    int ry = p.y + len * sin(fi - arrow_angle);
-
-    XDrawLine(app.dis, app.win, app.gc, lx, ly, p.x, p.y);
-    XDrawLine(app.dis, app.win, app.gc, rx, ry, p.x, p.y);
-}
-
-void draw_arrow_line(X11 app, Point p1, Point p2, double circle_radius) {
-    double dy = -(p2.y - p1.y);
-    double dx = (p2.x - p1.x);
-    double angle = atan(dy / dx);
-
-    int to_left = p1.x > p2.x; // to left (left top; left bottom)
-    if (to_left) {
-        Point p = {p2.x + circle_radius * cos(angle), p2.y - circle_radius * sin(angle)};
-        draw_head_arrow(app, p, 180 + angle * 180 / M_PI);
-    } else { // to right (right top; right bottom) && top && bottom
-        Point p = {p2.x - circle_radius * cos(angle), p2.y + circle_radius * sin(angle)};
-        draw_head_arrow(app, p, angle * 180 / M_PI);
-    }
-
-    XDrawLine(app.dis, app.win, app.gc, p1.x, p1.y, p2.x, p2.y);
-}
