@@ -29,6 +29,19 @@ Matrix get_boolean_matrix() {
     return (Matrix){matrix, n};
 }
 
+Matrix get_undirected_matrix(Matrix matrix) {
+    int n = matrix.n;
+    int **new_matrix = (int **) malloc(n * sizeof(int *));
+    for (int i = 0; i < n; i++) {
+        new_matrix[i] = (int *) malloc(n * sizeof(int));
+        for (int j = 0; j < n; j++) {
+            new_matrix[i][j] = matrix.val[i][j] | matrix.val[j][i];
+        }
+    }
+
+    return (Matrix){new_matrix, n};
+}
+
 int **rand_matrix(int n) {
     int **matrix = (int **) malloc(n * sizeof(int *));
     for (int i = 0; i < n; i++) {
@@ -63,4 +76,12 @@ void print_matrix(Matrix matrix) {
         }
         printf("\n");
     }
+}
+
+void print_undirected(Matrix matrix) {
+    printf("\n Undirected \n");
+
+    Matrix undirected = get_undirected_matrix(matrix);
+    print_matrix(undirected);
+    free_matrix(undirected);
 }

@@ -18,6 +18,7 @@ int main() {
 
     Matrix matrix = get_boolean_matrix();
     print_matrix(matrix);
+    print_undirected(matrix);
 
     while (1) {
         XNextEvent(app.dis, &event);
@@ -29,7 +30,12 @@ int main() {
         if (event.type == KeyPress && XLookupString(&event.xkey, text, 255, &key, 0) == 1) {
             if (text[0] == 'q')
                 break;
-            draw_graph(app, matrix);
+
+            redraw(app);
+            if (text[0] == 'd')
+                draw_graph(app, matrix, 1);
+            else
+                draw_graph(app, matrix, 0);
         }
     }
 
