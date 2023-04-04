@@ -1,8 +1,8 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
-#define width 500
-#define height 400
+#define width 650
+#define height 500
 
 typedef struct {
     Display *dis;

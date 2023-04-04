@@ -104,89 +104,56 @@ void draw_arrow_line(X11 app, Point p1, Point p2, double circle_radius) {
     draw_line(app, p1, p2);
 }
 
-void draw_through_angle(X11 app, Point *points, int i, int j, int circle_radius, int is_directed) {
-    int distanceX = abs(points[i].x - points[j].x);
-    int distanceY = abs(points[i].y - points[j].y);
+void draw_through_angle(X11 app, Point *points, int i, int j, int circle_radius, int is_directed, int is_small) {
+    Point p1 = points[i];
+    Point p2 = points[j];
 
-    int mid_x = (points[i].x + points[j].x) / 2;
-    int mid_y = (points[i].y + points[j].y) / 2;
-
-    int offsetX = 2.5 * circle_radius;
-    int offsetY = 2.5 * circle_radius;
-
-    double c = sqrt(pow(mid_x - points[i].x, 2) + pow(mid_y - points[i].y, 2));
-    double angle = atan2((double) offsetX, c);
+    int dx = p2.x - p1.x;
+    int dy = p2.y - p1.y;
 
     // flip in opposite direction
     int to_opposite = is_directed == 1 ? -1 : 1;
+
+    int offsetX = 2 * circle_radius + log10(abs(dy));
+    int offsetY = 2 * circle_radius + log10(abs(dx)); //* sin(angle);
+
     if (points[i].x > points[j].x && points[i].y > points[j].y) {
-        offsetX = to_opposite * offsetX;
-        offsetY = to_opposite * offsetY;
-        // not to overlap with other lines which is dense to each other
+        offsetY = -1 * offsetY;
+//    } else if (points[i].x > points[j].x && points[i].y < points[j].y) {
     } else if (points[i].x < points[j].x && points[i].y > points[j].y) {
-        offsetY = to_opposite * 2 * offsetY + log10(distanceY);
-        offsetX = 1.5 * offsetX + log10(distanceX);
-    } else if (points[i].x > points[j].x && points[i].y < points[j].y) {
-        offsetY = 2 * offsetY + log10(distanceY);
-        offsetX = to_opposite * 1.5 * offsetX + log10(distanceX);
+        offsetY = to_opposite * offsetY;
+        offsetX = to_opposite * offsetX;
     } else if (points[i].x < points[j].x && points[i].y < points[j].y) {
-        offsetX = 1.5 * offsetX + log10(distanceX);
-        offsetY = 1.5 * offsetY + log10(distanceY);
+        offsetX = to_opposite * offsetX;
+        offsetY = (to_opposite == -1 ? 1 : -1) * offsetY;
     }
 
-    Point middle = {mid_x - offsetX * cos(angle), mid_y + offsetY * sin(angle)};
+    if (dx == 0) {
+        offsetY = 0;
+        if (points[i].y > points[j].y)
+            offsetX *= to_opposite;
+    }
+    if (dy == 0) {
+        offsetX = 0;
+        if (points[i].x > points[j].x)
+            offsetY *= to_opposite;
+    }
 
-    XDrawLine(app.dis, app.win, app.gc, points[i].x, points[i].y, middle.x, middle.y);
+    if (is_small) {
+        offsetX /= 5;
+        offsetY /= 5;
+    }
 
+    Point middle = (Point) {(p1.x + p2.x) / 2 - offsetX, (p1.y + p2.y) / 2 - offsetY};
+    draw_line(app, points[i], middle);
     if (is_directed)
         draw_arrow_line(app, middle, points[j], circle_radius);
     else
         draw_line(app, middle, points[j]);
 }
 
-void draw_row_overlap(X11 app, Point *points, int i, int j, int circle_radius, int is_directed) {
-    int mid_x = (points[i].x + points[j].x) / 2;
-
-    int dx = abs(points[i].x - points[j].x);
-    int offset = circle_radius / 2 + log10(dx) * 10;
-
-    if (points[i].x > points[j].x)
-        offset *= -1;
-
-    Point middle = {mid_x, points[i].y + offset};
-    draw_line(app, points[i], middle);
-    if (is_directed)
-        draw_arrow_line(app, middle, points[j], circle_radius);
-    else draw_line(app, middle, points[j]);
-}
-
-void draw_column_overlap(X11 app, Point *points, int i, int j, int circle_radius, int is_directed) {
-    int mid_y = (points[i].y + points[j].y) / 2;
-
-    int dy = abs(points[i].y - points[j].y);
-    int offset = circle_radius / 2 + log10(dy) * 10;
-
-    if (points[i].y > points[j].y)
-        offset *= -1;
-
-    Point middle = {points[i].x + offset, mid_y};
-    draw_line(app, points[i], middle);
-    if (is_directed)
-        draw_arrow_line(app, middle, points[j], circle_radius);
-    else draw_line(app, middle, points[j]);
-}
-
-void draw_overlapping(X11 app, Point *points, int i, int j, int circle_radius, int is_directed) {
-    if (points[i].y == points[j].y)
-        draw_row_overlap(app, points, i, j, circle_radius, is_directed);
-    else if (points[i].x == points[j].x)
-        draw_column_overlap(app, points, i, j, circle_radius, is_directed);
-    else
-        draw_through_angle(app, points, i, j, circle_radius, is_directed);
-}
-
 void draw_graph(X11 app, Matrix matrix, int is_directed) {
-    Point *points = get_coordinates(matrix.n, 100);
+    Point *points = get_coordinates(matrix.n, 150);
     int offset = 100;
     applyOffset(points, matrix.n, offset);
 
@@ -199,16 +166,12 @@ void draw_graph(X11 app, Matrix matrix, int is_directed) {
     for (int i = 0; i < matrix.n; i++) {
         for (int j = 0; j < matrix.n; j++) {
             if (matrix.val[i][j] == 0) continue;
-//            if (i != 10 ||  j != 3) continue;
-
             if (i == j)
                 draw_loop(app, circle_radius, (Point) {points[i].x, points[i].y}, is_directed);
-            else if (is_through_center(points, i, j, matrix.n))
-                draw_through_angle(app, points, i, j, circle_radius, is_directed);
-            else if (is_overlapping(points, matrix.n, i, j))
-                draw_overlapping(app, points, i, j, circle_radius, is_directed);
+            else if (is_through_center(points, i, j, matrix.n) || is_overlapping(points, matrix.n, i, j))
+                draw_through_angle(app, points, i, j, circle_radius, is_directed, 0);
             else if (is_directed && is_arrows_overlaps(matrix, i, j))
-                draw_overlapping(app, points, i, j, circle_radius, is_directed);
+                draw_through_angle(app, points, i, j, circle_radius, is_directed, 1);
             else {
                 if (is_directed)
                     draw_arrow_line(app, points[i], points[j], circle_radius);
