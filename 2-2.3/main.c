@@ -16,8 +16,8 @@ int main() {
     char text[255];
 
     Matrix matrix = get_boolean_matrix();
-    print_matrix(matrix);
-    print_undirected(matrix);
+    print_matrix(matrix, 1);
+    print_matrix(matrix, 0);
 
     while (1) {
         XNextEvent(app.dis, &event);

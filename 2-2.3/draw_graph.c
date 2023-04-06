@@ -5,9 +5,12 @@ void applyOffset(Point *points, int n, int offset) {
     }
 }
 
-void draw_nodes(X11 app, Point *points, int len, int circle_radius, unsigned long bg, unsigned long fg) {
+void draw_nodes(X11 app, Point *points, int len, int circle_radius) {
     int ch_x_offset = 3;
     int ch_y_offset = 5;
+
+    unsigned long bg = 0x83c9f4;
+    unsigned long fg = 0x2b061e;
 
     for (int i = 0; i < len; i++) {
         XSetForeground(app.dis, app.gc, bg);
@@ -160,8 +163,6 @@ void draw_graph(X11 app, Matrix matrix, int is_directed) {
     applyOffset(points, matrix.n, offset);
 
     int circle_radius = 20;
-    unsigned long blue = 0x83c9f4;
-    unsigned long dark = 0x2b061e;
 
     XSetLineAttributes(app.dis, app.gc, 2, LineSolid, CapButt, JoinMiter);
 
@@ -183,7 +184,7 @@ void draw_graph(X11 app, Matrix matrix, int is_directed) {
         }
     }
 
-    draw_nodes(app, points, matrix.n, circle_radius, blue, dark);
+    draw_nodes(app, points, matrix.n, circle_radius);
 
     free(points);
 }
