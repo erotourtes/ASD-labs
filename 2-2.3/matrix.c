@@ -20,7 +20,7 @@ void free_matrix(Matrix matrix);
 void print_matrix(Matrix matrix);
 
 Matrix get_boolean_matrix() {
-    srand(2119);
+    srand(n1 * 1000 + n2 * 100 + n3 * 10 + n4);
 
     int n = 10 + n3;
     int **matrix = rand_matrix(n);

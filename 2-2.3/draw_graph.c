@@ -115,16 +115,17 @@ void draw_through_angle(X11 app, Point *points, int i, int j, int circle_radius,
     int to_opposite = is_directed == 1 ? -1 : 1;
 
     int offsetX = 2 * circle_radius + log10(abs(dy));
-    int offsetY = 2 * circle_radius + log10(abs(dx)); //* sin(angle);
+    int offsetY = 2 * circle_radius + log10(abs(dx));
+
+    int rand_offset = rand() % circle_radius * to_opposite;
 
     if (points[i].x > points[j].x && points[i].y > points[j].y) {
-        offsetY = -1 * offsetY;
-//    } else if (points[i].x > points[j].x && points[i].y < points[j].y) {
+        offsetY = -1 * offsetY + rand_offset;
     } else if (points[i].x < points[j].x && points[i].y > points[j].y) {
-        offsetY = to_opposite * offsetY;
+        offsetY = to_opposite * offsetY + rand_offset;
         offsetX = to_opposite * offsetX;
     } else if (points[i].x < points[j].x && points[i].y < points[j].y) {
-        offsetX = to_opposite * offsetX;
+        offsetX = to_opposite * offsetX + rand_offset;
         offsetY = (to_opposite == -1 ? 1 : -1) * offsetY;
     }
 
@@ -145,6 +146,7 @@ void draw_through_angle(X11 app, Point *points, int i, int j, int circle_radius,
     }
 
     Point middle = (Point) {(p1.x + p2.x) / 2 - offsetX, (p1.y + p2.y) / 2 - offsetY};
+
     draw_line(app, points[i], middle);
     if (is_directed)
         draw_arrow_line(app, middle, points[j], circle_radius);
