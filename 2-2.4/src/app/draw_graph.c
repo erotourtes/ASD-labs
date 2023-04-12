@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <malloc.h>
+#include <math.h>
+
 #include "Point.h"
 #include "Matrix.h"
-#include "math.h"
+#include "graph_coords.c"
 
 void applyOffset(Point *points, int n, int offset) {
     for (int i = 0; i < n; i++) {

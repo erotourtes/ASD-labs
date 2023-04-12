@@ -6,7 +6,6 @@
 #define n4 9
 
 #include "app/app.c"
-#include "matrix/graph_coords.c"
 #include "matrix/matrix.c"
 #include "app/draw_graph.c"
 

@@ -1,6 +1,6 @@
 #include <malloc.h>
+#include <math.h>
 #include "Point.h"
-#include "math.h"
 
 void copy_point(Point *from, Point *to) {
     to->x = from->x;
