@@ -1,0 +1,3 @@
+/home/sirmax/Documents/projects/C/ASD-labs/2-2.4/cmake-build-debug/CMakeFiles/2_2_4.dir
+/home/sirmax/Documents/projects/C/ASD-labs/2-2.4/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/sirmax/Documents/projects/C/ASD-labs/2-2.4/cmake-build-debug/CMakeFiles/rebuild_cache.dir
