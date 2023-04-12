@@ -52,7 +52,7 @@ build cmake_object_order_depends_target_2_2_4: phony || CMakeFiles/2_2_4.dir
 build CMakeFiles/2_2_4.dir/src/main.c.o: C_COMPILER__2_2_4_Debug /home/sirmax/Documents/projects/C/ASD-labs/2-2.4/src/main.c || cmake_object_order_depends_target_2_2_4
   DEP_FILE = CMakeFiles/2_2_4.dir/src/main.c.o.d
   FLAGS = -g -fdiagnostics-color=always -std=gnu11
-  INCLUDES = -I/home/sirmax/Documents/projects/C/ASD-labs/2-2.4/src/common
+  INCLUDES = -I/home/sirmax/Documents/projects/C/ASD-labs/2-2.4/src/headers
   OBJECT_DIR = CMakeFiles/2_2_4.dir
   OBJECT_FILE_DIR = CMakeFiles/2_2_4.dir/src
 

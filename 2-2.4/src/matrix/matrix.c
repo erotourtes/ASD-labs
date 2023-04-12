@@ -1,12 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "Matrix.h"
-
-#define n1 2
-#define n2 1
-#define n3 1
-#define n4 9
-
 int **rand_matrix(int n);
 
 int **mulmr(double k, int **matrix, int n);
@@ -15,12 +9,12 @@ void free_matrix(Matrix matrix);
 
 void print_matrix(Matrix matrix, int is_directed);
 
-Matrix get_boolean_matrix() {
+Matrix get_boolean_matrix(double k) {
     srand(n1 * 1000 + n2 * 100 + n3 * 10 + n4);
 
     int n = 10 + n3;
     int **matrix = rand_matrix(n);
-    mulmr(1.0 - n3 * 0.02 - n4 * 0.005 - 0.25, matrix, n);
+    mulmr(k, matrix, n);
 
     return (Matrix){matrix, n};
 }

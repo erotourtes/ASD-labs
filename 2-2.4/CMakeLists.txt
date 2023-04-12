@@ -8,7 +8,7 @@ find_package(X11 REQUIRED)
 include_directories(${X11_INCLUDE_DIR})
 
 #Bring the Headers into the project
-include_directories(src/common)
+include_directories(src/headers)
 
 file(GLOB SOURCES "src/*.c")
 
