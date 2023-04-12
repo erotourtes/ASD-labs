@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "../common/Matrix.h"
+#include "Matrix.h"
 
 #define n1 2
 #define n2 1

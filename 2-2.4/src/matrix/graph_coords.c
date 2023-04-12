@@ -1,4 +1,5 @@
-#include "../common/Point.h"
+#include <malloc.h>
+#include "Point.h"
 #include "math.h"
 
 void copy_point(Point *from, Point *to) {
@@ -9,7 +10,7 @@ void copy_point(Point *from, Point *to) {
 void compress(int i, int rest, int *distance, int *num_in_row) {
     if (i == 0) { // top
         if (rest == 1) { // need to compress top row
-            *distance *= (double) (*num_in_row - 1) / (*num_in_row);
+            *distance *= (*num_in_row - 1) / (*num_in_row);
             (*num_in_row)++;
         } else if (rest == 2 || rest == 3) {
             (*num_in_row)++;
@@ -17,7 +18,7 @@ void compress(int i, int rest, int *distance, int *num_in_row) {
     }
 
     if (i == 1 && rest == 3) { // right
-        *distance *= (double) (*num_in_row - 1) / (*num_in_row);
+        *distance *= (*num_in_row - 1) / (*num_in_row);
         (*num_in_row)++;
     }
 
@@ -30,7 +31,7 @@ Point *get_coordinates(int n, int distance) {
     Point *points = malloc(n * sizeof(Point));
 
     int k = n - 1; // number of points without center
-    int num_in_row = floor((k + 4) / 4);
+    int num_in_row = floor((k + 4.0) / 4);
     int rest = k % 4;
 
     int directions[][2] = {{1,  0},
@@ -53,8 +54,8 @@ Point *get_coordinates(int n, int distance) {
         }
     }
 
-    points[cur].x = ((num_in_row - 1) * distance + (rest > 1 ? distance : 0)) / 2;
-    points[cur].y = ((num_in_row - 1) * distance) / 2;
+    points[cur].x = ((num_in_row - 1) * distance + (rest > 1 ? distance : 0)) / 2.0;
+    points[cur].y = ((num_in_row - 1) * distance) / 2.0;
 
     return points;
 }

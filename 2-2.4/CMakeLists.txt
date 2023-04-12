@@ -7,7 +7,7 @@ set(CMAKE_C_STANDARD 11)
 find_package(X11 REQUIRED)
 include_directories(${X11_INCLUDE_DIR})
 
-#Bring the Point into the project
+#Bring the Headers into the project
 include_directories(src/common)
 
 file(GLOB SOURCES "src/*.c")

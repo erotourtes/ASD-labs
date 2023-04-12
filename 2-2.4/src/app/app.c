@@ -1,7 +1,7 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
-#include "../common/X11.h"
+#include "X11.h"
 
 #define width 650
 #define height 500
@@ -34,4 +34,4 @@ void close_window(X11 app) {
 
 void redraw(X11 app) {
     XClearWindow(app.dis, app.win);
-};
+}

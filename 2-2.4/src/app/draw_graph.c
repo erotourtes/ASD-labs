@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <malloc.h>
-#include "../common/Point.h"
-#include "../common/Matrix.h"
+#include "Point.h"
+#include "Matrix.h"
 #include "math.h"
 
 void applyOffset(Point *points, int n, int offset) {
@@ -66,9 +66,9 @@ int is_arrows_overlaps(Matrix matrix, int i, int j) {
     return m[i][j] && m[j][i];
 }
 
-void draw_head_arrow(X11 app, Point p, float deg) {
-    float fi = M_PI / 180.0 * (180.0 - deg);
-    float arrow_angle = 0.3;
+void draw_head_arrow(X11 app, Point p, double deg) {
+    double fi = M_PI / 180.0 * (180.0 - deg);
+    float arrow_angle = 0.3f;
     int len = 15;
 
     int lx = p.x + len * cos(fi + arrow_angle);
@@ -80,10 +80,10 @@ void draw_head_arrow(X11 app, Point p, float deg) {
     XDrawLine(app.dis, app.win, app.gc, rx, ry, p.x, p.y);
 }
 
-void draw_loop(X11 app, int circle_radius, Point p, int is_directed) {
-    int arc_width = circle_radius * 1.5;
-    int arc_height = circle_radius * 1.5;
-    XDrawArc(app.dis, app.win, app.gc, p.x - circle_radius - arc_width / 2, p.y - arc_height, arc_width, arc_height,
+void draw_loop(X11 app, double circle_radius, Point p, int is_directed) {
+    int arc_width = floor(circle_radius * 1.5);
+    int arc_height = floor(circle_radius * 1.5);
+    XDrawArc(app.dis, app.win, app.gc, p.x - circle_radius - arc_width / 2.0, p.y - arc_height, arc_width, arc_height,
              0 * 64,
              360 * 64);
 
@@ -104,7 +104,7 @@ void draw_arrow_line(X11 app, Point p1, Point p2, double circle_radius) {
     int to_left = p1.x > p2.x; // to left (left top; left bottom)
     if (to_left) {
         Point p = {p2.x + circle_radius * cos(angle), p2.y - circle_radius * sin(angle)};
-        draw_head_arrow(app, p, 180 + angle * 180 / M_PI);
+        draw_head_arrow(app, p, 180.0 + angle * 180.0 / M_PI);
     } else { // to right (right top; right bottom) && top && bottom
         Point p = {p2.x - circle_radius * cos(angle), p2.y + circle_radius * sin(angle)};
         draw_head_arrow(app, p, angle * 180 / M_PI);
@@ -123,8 +123,8 @@ void draw_through_angle(X11 app, Point *points, int i, int j, int circle_radius,
     // flip in opposite direction
     int to_opposite = is_directed == 1 ? -1 : 1;
 
-    int offsetX = 2 * circle_radius + log10(abs(dy));
-    int offsetY = 2 * circle_radius + log10(abs(dx));
+    double offsetX = 2 * circle_radius + log10(abs(dy));
+    double offsetY = 2 * circle_radius + log10(abs(dx));
 
     int rand_offset = rand() % circle_radius * to_opposite;
 
