@@ -121,6 +121,26 @@ void do_lab_task1(Matrix m) {
     free(degree);
 }
 
-void do_lab_task4(Matrix m) {
+int path2(Matrix m) {
 
+}
+
+
+void do_lab_task4(Matrix m) {
+    printf("#4\n");
+
+    printf("%-30s", "Nodes:");
+    for (int i = 0; i < m.n; i++)
+        printf("%-2d ", i + 1);
+    printf("\n");
+
+    int *in_degree = get_in_degree(m);
+    printf("%-30s", "In-Degree of directed graph:");
+    print_array(in_degree, m.n);
+    free(in_degree);
+
+    int *out_degree = get_out_degree(m);
+    printf("%-30s", "Out-Degree of directed graph:");
+    print_array(out_degree, m.n);
+    free(out_degree);
 }
