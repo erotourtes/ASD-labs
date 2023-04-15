@@ -1,8 +1,6 @@
 #include "Matrix.h"
 #include <stdlib.h>
 
-int *get_degree(Matrix m);
-
 int *get_degree(Matrix m) {
     int *degree = (int *) malloc(m.n * sizeof(int));
     for (int i = 0; i < m.n; i++) {
@@ -74,7 +72,6 @@ void print_array(int *arr, int n) {
     printf("\n");
 }
 
-
 void print_isolated_vertexes(const int *degree, int n) {
     for (int i = 0; i < n; i++) {
         if (degree[i] == 0)
@@ -121,20 +118,6 @@ void do_lab_task1(Matrix m) {
     printf("%-30s", "Isolated vertexes:");
     print_isolated_vertexes(degree, m.n);
     free(degree);
-}
-
-Matrix multiply_matrix(const Matrix m1, const Matrix m2) {
-    Matrix new_matrix = {create_matrix(m1.n), m1.n};
-
-    for (int i = 0; i < m1.n; i++) {
-        for (int j = 0; j < m1.n; j++) {
-            for (int k = 0; k < m2.n; k++) {
-                new_matrix.val[i][k] += m1.val[i][j] * m2.val[j][k];
-            }
-        }
-    }
-
-    return new_matrix;
 }
 
 // TODO: use dfs to find path with n edges
@@ -187,31 +170,6 @@ void paths3(Matrix m) {
     free_matrix(&cube);
 }
 
-void add_matrix(Matrix target, Matrix matrix) {
-    for (int i = 0; i < target.n; i++) {
-        for (int j = 0; j < target.n; j++) {
-            target.val[i][j] += matrix.val[i][j];
-        }
-    }
-}
-
-void copy_matrix(Matrix target, Matrix matrix) {
-    for (int i = 0; i < target.n; i++) {
-        for (int j = 0; j < target.n; j++) {
-            target.val[i][j] = matrix.val[i][j];
-        }
-    }
-}
-
-void to_boolean_matrix(Matrix m) {
-    for (int i = 0; i < m.n; i++) {
-        for (int j = 0; j < m.n; j++) {
-            if (m.val[i][j] != 0)
-                m.val[i][j] = 1;
-        }
-    }
-}
-
 Matrix reachability_matrix(Matrix m) {
     Matrix cur = {create_matrix(m.n), m.n};
     copy_matrix(cur, m);
@@ -234,46 +192,92 @@ Matrix reachability_matrix(Matrix m) {
     return reach;
 }
 
-void strongly_connected_components(Matrix m) {
+Matrix strongly_connected_matrix(const Matrix m) {
     Matrix reach = reachability_matrix(m);
 
     // To avoid transposing matrix
-    for (int i = 0; i < m.n; i++) {
-        for (int j = 0; j < m.n; j++) {
+    for (int i = 0; i < m.n; i++)
+        for (int j = 0; j < m.n; j++)
             reach.val[i][j] = reach.val[i][j] & reach.val[j][i];
-        }
-    }
 
+    return reach;
+}
 
-    printf("4.5\n");
-    // Find components
-    int *visited = calloc(m.n, sizeof(int));
-    int cur_component = 0;
-    for (int i = 0; i < m.n; i++) {
+int** strongly_connected_components(Matrix reach) {
+    int *visited = calloc(reach.n, sizeof(int));
+    int **components = calloc(reach.n + 1, sizeof(int*));
+    int size = 0;
+    for (int i = 0; i < reach.n; i++) {
         if (visited[i] == 1)
             continue;
 
-        printf("Component %d: ", ++cur_component);
-        for (int j = 0; j < m.n; j++) {
+        int *component = calloc(reach.n + 1, sizeof(int));
+        int component_size = 0;
+        for (int j = 0; j < reach.n; j++) {
             if (reach.val[i][j] == 1) {
+                component[component_size++] = j;
                 visited[j] = 1;
-                printf("%d ", j + 1);
             }
         }
 
-        printf("\n");
+        // marker to indicate end of component
+        component[component_size] = -1;
+        components[size++] = component;
     }
 
-    printf("4.6\n");
-    printf("Matrix of strongly connected components:\n");
-    print_matrix(reach, 0);
+    components[size] = NULL;
 
-    printf("4.7\n");
-    printf("Condensation graph:\n");
+    free(visited);
+    return components;
+}
 
+void print_components(int **components) {
+    printf("Strongly connected components:\n");
+    for (int i = 0; components[i] != NULL; i++) {
+        printf("Component %d: ", i + 1);
+        for (int j = 0; components[i][j] != -1; j++) {
+            printf("%d ", components[i][j] + 1);
+        }
+        printf("\n");
+    }
+}
 
+Matrix get_condensation_graph(Matrix m, int **components) {
+    int size = 0;
+    while(components[size] != NULL) size++;
+   /*
+    *  Representation of component
+    *  0: 1 4 6 -1
+    *  1: 0 2 5 -1
+    *  2: 7 -1
+    *  NULL
+    *
+    *  where 0, 1, 2 are indexes of components
+    *  and 1, 4, 6 are nodes that create a component
+    *  -1 and NULL are markers to indicate end of component
+    * */
 
-    free_matrix(&reach);
+    Matrix condensation = {create_matrix(size), size};
+    for (int i = 0; components[i] != NULL; i++) {
+        for (int j = 0; components[i][j] != -1; j++) {
+            int cur_node = components[i][j];
+
+            for (int k = 0; k < size; k++) {
+                if (i == k)
+                    continue;
+
+                for (int l = 0; components[k][l] != -1; l++) {
+                    int next_component_node = components[k][l];
+
+                    if (m.val[cur_node][next_component_node] == 1) {
+                        condensation.val[i][k] = 1;
+                    }
+                }
+            }
+        }
+    }
+
+    return condensation;
 }
 
 void do_lab_task4(Matrix m) {
@@ -305,7 +309,23 @@ void do_lab_task4(Matrix m) {
     print_matrix(reach, 0);
     free_matrix(&reach);
 
-
     printf("4.5\n");
-    strongly_connected_components(m);
+    Matrix strongly_connected = strongly_connected_matrix(m);
+    int** components = strongly_connected_components(strongly_connected);
+    print_components(components);
+
+    printf("4.6\n");
+    printf("Matrix of strongly connected components:\n");
+    print_matrix(strongly_connected, 0);
+    free_matrix(&strongly_connected);
+
+    printf("4.7\n");
+    printf("Condensation graph:\n");
+    Matrix condensation = get_condensation_graph(m, components);
+    print_matrix(condensation, 0);
+    free_matrix(&condensation);
+
+    for (int i = 0; components[i] != NULL; i++)
+        free(components[i]);
+    free(components);
 }
