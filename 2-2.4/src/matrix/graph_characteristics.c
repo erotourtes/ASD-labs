@@ -118,6 +118,8 @@ void do_lab_task1(Matrix m) {
     printf("%-30s", "Isolated vertexes:");
     print_isolated_vertexes(degree, m.n);
     free(degree);
+
+    free_matrix(&u_m);
 }
 
 // TODO: use dfs to find path with n edges
