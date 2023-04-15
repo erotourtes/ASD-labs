@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <malloc.h>
 #include <math.h>
+#include <limits.h>
 
 #include "Point.h"
 #include "Matrix.h"
@@ -177,6 +178,9 @@ void draw_graph(X11 app, Matrix matrix, int is_directed) {
     for (int i = 0; i < matrix.n; i++) {
         for (int j = 0; j < matrix.n; j++) {
             if (matrix.val[i][j] == 0) continue;
+
+            XSetForeground(app.dis, app.gc, rand() % USHRT_MAX);
+
             if (i == j)
                 draw_loop(app, circle_radius, (Point) {points[i].x, points[i].y}, is_directed);
             else if (is_through_center(points, i, j, matrix.n) || is_overlapping(points, matrix.n, i, j))

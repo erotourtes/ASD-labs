@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "Matrix.h"
 
 int **rand_matrix(int n);
@@ -8,7 +9,7 @@ int **mulmr(double k, int **matrix, int n);
 
 void free_matrix(Matrix *matrix);
 
-void print_matrix(Matrix matrix);
+void print_matrix(Matrix matrix, int should_print_undirected);
 
 Matrix get_boolean_matrix(int n, double k) {
     srand(n1 * 1000 + n2 * 100 + n3 * 10 + n4);
@@ -19,14 +20,19 @@ Matrix get_boolean_matrix(int n, double k) {
     return (Matrix) {matrix, n};
 }
 
-int **rand_matrix(int n) {
+int **create_matrix(int n) {
     int **matrix = (int **) malloc(n * sizeof(int *));
-    for (int i = 0; i < n; i++) {
-        matrix[i] = (int *) malloc(n * sizeof(int));
-        for (int j = 0; j < n; j++) {
+    for (int i = 0; i < n; i++)
+        matrix[i] = (int *) calloc(n, sizeof(int));
+
+    return matrix;
+}
+
+int **rand_matrix(int n) {
+    int **matrix = create_matrix(n);
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < n; j++)
             matrix[i][j] = rand() % 3;
-        }
-    }
 
     return matrix;
 }
@@ -63,12 +69,23 @@ Matrix get_undirected_matrix(Matrix m) {
     return (Matrix) {matrix, m.n};
 }
 
-void print_matrix(Matrix matrix) {
+void print_matrix(Matrix matrix, int should_print_undirected) {
     Matrix undirected = get_undirected_matrix(matrix);
-    printf("Matrix:\t\t\tUndirected matrix:\n");
+
+    char undirected_str[] = "\t\t\tUndirected matrix:";
+    char str[30] = "Matrix:";
+    if (should_print_undirected)
+        strcat(str, undirected_str);
+    printf("%s \n", str);
+
     for (int i = 0; i < matrix.n; i++) {
         for (int j = 0; j < matrix.n; j++)
             printf("%d ", matrix.val[i][j]);
+
+        if (!should_print_undirected) {
+            printf("\n");
+            continue;
+        }
 
         printf("\t");
 

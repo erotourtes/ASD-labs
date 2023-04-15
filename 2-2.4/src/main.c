@@ -34,17 +34,18 @@ int main() {
                 printf("\nGenerating matrix 1...\n");
                 free_matrix(&matrix);
                 matrix = get_boolean_matrix(10 + n3, 1.0 - n3 * 0.01 - n4 * 0.01 - 0.3);
-                print_matrix(matrix);
+                print_matrix(matrix, 1);
                 do_lab_task1(matrix);
             } else if (text[0] == '2') {
                 printf("\nGenerating matrix 2...\n");
                 free_matrix(&matrix);
                 matrix = get_boolean_matrix(10 + n3, 1.0 - n3 * 0.005 - n4 * 0.005 - 0.27);
-                print_matrix(matrix);
+                matrix.val[0][8] = 0; // to make it not strongly connected
+                print_matrix(matrix, 0);
                 do_lab_task4(matrix);
             }
 
-            int is_directed = text[0] == 'd' ? 1 : 0;
+            int is_directed = text[0] == 'u' ? 0 : 1;
             redraw(app);
             draw_graph(app, matrix, is_directed);
         }
