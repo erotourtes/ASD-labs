@@ -3,9 +3,9 @@
 #include <string.h>
 #include "Matrix.h"
 
-int **rand_matrix(int n);
+double **rand_matrix(int n);
 
-int **mulmr(double k, int **matrix, int n);
+int **mulmr(double k, double **matrix, int n);
 
 void free_matrix(Matrix *matrix);
 
@@ -14,10 +14,14 @@ void print_matrix(Matrix matrix, int should_print_undirected);
 Matrix get_boolean_matrix(int n, double k) {
     srand(n1 * 1000 + n2 * 100 + n3 * 10 + n4);
 
-    int **matrix = rand_matrix(n);
-    mulmr(k, matrix, n);
+    double **matrix = rand_matrix(n);
+    int **boolean_matrix = mulmr(k, matrix, n);
 
-    return (Matrix) {matrix, n};
+    for (int i = 0; i < n; i++)
+        free(matrix[i]);
+    free(matrix);
+
+    return (Matrix) {boolean_matrix, n};
 }
 
 int **create_matrix(int n) {
@@ -28,22 +32,25 @@ int **create_matrix(int n) {
     return matrix;
 }
 
-int **rand_matrix(int n) {
-    int **matrix = create_matrix(n);
-    for (int i = 0; i < n; i++)
+double **rand_matrix(int n) {
+    double **matrix = (double **) malloc(n * sizeof(double *));
+    for (int i = 0; i < n; i++) {
+        matrix[i] = (double *) malloc(n * sizeof(double));
         for (int j = 0; j < n; j++)
-            matrix[i][j] = rand() % 3;
+            matrix[i][j] = 2.0 * rand() / RAND_MAX;
+    }
 
     return matrix;
 }
 
-int **mulmr(double k, int **matrix, int n) {
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-            if (matrix[i][j] * k > 1) matrix[i][j] = 1;
-            else matrix[i][j] = 0;
-        }
-    }
+int **mulmr(double k, double **matrix, int n) {
+    int **boolean_matrix = create_matrix(n);
+
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < n; j++)
+            boolean_matrix[i][j] = matrix[i][j] * k;
+
+    return boolean_matrix;
 }
 
 void free_matrix(Matrix *matrix) {

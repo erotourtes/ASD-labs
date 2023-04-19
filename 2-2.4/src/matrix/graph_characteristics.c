@@ -42,18 +42,20 @@ int *get_out_degree(Matrix m) {
 
 // if graph is regular, return degree of graph else return -1
 int get_regularity(Matrix m) {
-    int *degree = get_degree(m);
+    int *in_degree = get_in_degree(m);
+    int *out_degree = get_out_degree(m);
 
     int regularity = 0;
     for (int i = 1; i < m.n; i++) {
-        if (degree[i] != degree[i - 1]) {
+        if (in_degree[i] != in_degree[i - 1] || out_degree[i] != out_degree[i - 1] || in_degree[i] != out_degree[i]) {
             regularity = -1;
             break;
         }
         regularity++;
     }
 
-    free(degree);
+    free(in_degree);
+    free(out_degree);
     return regularity;
 }
 
@@ -104,14 +106,18 @@ void do_lab_task1(Matrix m) {
     print_array(out_degree, m.n);
     free(out_degree);
 
-    // is same for directed and undirected graph
     int regular = get_regularity(u_m);
+    printf("Undirected ");
+    printf("%-30s", regular == -1 ? "Graph is irregular" : "Graph is regular:");
+    printf("%d\n", regular);
+
+    regular = get_regularity(m);
+    printf("Directed ");
     printf("%-30s", regular == -1 ? "Graph is irregular" : "Graph is regular:");
     printf("%d\n", regular);
 
     printf("#3\n");
 
-    // is same for directed and undirected graph
     printf("%-30s", "Leaf vertexes:");
     print_leaf_vertexes(degree, m.n);
 
@@ -161,7 +167,7 @@ void paths3(Matrix m) {
 
             for (int k = 0; k < m.n; k++) {
                 for (int l = 0; l < m.n; l++) {
-                    if (m.val[i][k] == 1 && m.val[k][l] == 1 && m.val[l][j] == 1) {
+                    if (m.val[i][k] && m.val[k][l] && m.val[l][j]) {
                         printf("%d -> %d -> %d -> %d\n", i + 1, k + 1, l + 1, j + 1);
                     }
                 }
