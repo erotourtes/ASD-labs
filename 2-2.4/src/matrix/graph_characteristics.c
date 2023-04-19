@@ -288,7 +288,7 @@ Matrix get_condensation_graph(Matrix m, int **components) {
     return condensation;
 }
 
-void do_lab_task4(Matrix m) {
+Matrix do_lab_task4(Matrix m) {
     printf("#4\n");
 
     printf("%-30s", "Nodes:");
@@ -331,9 +331,10 @@ void do_lab_task4(Matrix m) {
     printf("Condensation graph:\n");
     Matrix condensation = get_condensation_graph(m, components);
     print_matrix(condensation, 0);
-    free_matrix(&condensation);
 
     for (int i = 0; components[i] != NULL; i++)
         free(components[i]);
     free(components);
+
+    return condensation;
 }

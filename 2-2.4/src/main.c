@@ -10,6 +10,10 @@
 #include "app/draw_graph.c"
 #include "matrix/graph_characteristics.c"
 
+void handle_button_pressed1(Matrix *matrix);
+
+void handle_button_pressed2(X11 app, Matrix *matrix, int offset);
+
 int main() {
     X11 app = init("Lab #3");
 
@@ -30,23 +34,16 @@ int main() {
             if (text[0] == 'q')
                 break;
 
-            if (text[0] == '1' || matrix.val == NULL) {
-                printf("\nGenerating matrix 1...\n");
-                free_matrix(&matrix);
-                matrix = get_boolean_matrix(10 + n3, 1.0 - n3 * 0.01 - n4 * 0.01 - 0.3);
-                print_matrix(matrix, 1);
-                do_lab_task1(matrix);
-            } else if (text[0] == '2') {
-                printf("\nGenerating matrix 2...\n");
-                free_matrix(&matrix);
-                matrix = get_boolean_matrix(10 + n3, 1.0 - n3 * 0.005 - n4 * 0.005 - 0.27);
-                print_matrix(matrix, 0);
-                do_lab_task4(matrix);
-            }
+            redraw(app);
+            int offset = 100;
+
+            if (text[0] == '1' || matrix.val == NULL)
+                handle_button_pressed1(&matrix);
+            else if (text[0] == '2')
+                handle_button_pressed2(app, &matrix, offset);
 
             int is_directed = text[0] == 'u' ? 0 : 1;
-            redraw(app);
-            draw_graph(app, matrix, is_directed);
+            draw_graph(app, matrix, is_directed, offset, offset);
         }
     }
 
@@ -54,4 +51,27 @@ int main() {
     free_matrix(&matrix);
     printf("Bye!");
     return 0;
+}
+
+void handle_button_pressed1(Matrix *matrix) {
+    printf("\nGenerating matrix 1...\n");
+    free_matrix(matrix);
+    matrix->val = get_boolean_matrix(10 + n3, 1.0 - n3 * 0.01 - n4 * 0.01 - 0.3).val;
+    matrix->n = 10 + n3;
+    print_matrix(*matrix, 1);
+    do_lab_task1(*matrix);
+}
+
+void handle_button_pressed2(X11 app, Matrix *matrix, int offset) {
+    printf("\nGenerating matrix 2...\n");
+    free_matrix(matrix);
+    matrix->val = get_boolean_matrix(10 + n3, 1.0 - n3 * 0.005 - n4 * 0.005 - 0.27).val;
+    matrix->n = 10 + n3;
+
+    print_matrix(*matrix, 0);
+    Matrix condensation = do_lab_task4(*matrix);
+
+    int offsetX = offset * (int)ceil((10 + n3) / 4.0 + 4);
+    draw_graph(app, condensation, 1, offsetX, offset);
+    free_matrix(&condensation);
 }

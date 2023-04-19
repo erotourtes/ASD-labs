@@ -7,10 +7,10 @@
 #include "Matrix.h"
 #include "graph_coords.c"
 
-void applyOffset(Point *points, int n, int offset) {
+void applyOffset(Point *points, int n, int offsetX, int offsetY) {
     for (int i = 0; i < n; i++) {
-        points[i].x += offset;
-        points[i].y += offset;
+        points[i].x += offsetX;
+        points[i].y += offsetY;
     }
 }
 
@@ -166,10 +166,9 @@ void draw_through_angle(X11 app, Point *points, int i, int j, int circle_radius,
         draw_line(app, middle, points[j]);
 }
 
-void draw_graph(X11 app, Matrix matrix, int is_directed) {
+void draw_graph(X11 app, Matrix matrix, int is_directed, int offsetX, int offsetY) {
     Point *points = get_coordinates(matrix.n, 150);
-    int offset = 100;
-    applyOffset(points, matrix.n, offset);
+    applyOffset(points, matrix.n, offsetX, offsetY);
 
     int circle_radius = 20;
 
