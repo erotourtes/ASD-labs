@@ -1,6 +1,8 @@
 #include "Matrix.h"
 #include <stdlib.h>
 
+#define NULL 0
+
 int *get_degree(Matrix m) {
     int *degree = (int *) malloc(m.n * sizeof(int));
     for (int i = 0; i < m.n; i++) {
@@ -128,7 +130,6 @@ void do_lab_task1(Matrix m) {
     free_matrix(&u_m);
 }
 
-// TODO: use dfs to find path with n edges
 void path2(Matrix m) {
     Matrix square = multiply_matrix(m, m);
     printf("Square:\n");
@@ -151,8 +152,9 @@ void path2(Matrix m) {
     free_matrix(&square);
 }
 
-// TODO: use dfs to find path with n edges
 void paths3(Matrix m) {
+    // might use paths2 not to calculate square matrix twice and get rid of 4x loop,
+    // however it wouldn't be independent function and I need to implement List, so I decided to leave it as is
     Matrix square = multiply_matrix(m, m);
     Matrix cube = multiply_matrix(square, m);
     free_matrix(&square);
@@ -177,6 +179,32 @@ void paths3(Matrix m) {
 
     free_matrix(&cube);
 }
+
+void paths_recursive(int len, int cur_paths_count, int *path, const Matrix m) {
+    // might be memoized
+    if (len == cur_paths_count)
+        return print_array(path, len);
+
+    for (int i = 0; i < m.n; i++) {
+        int last_node = path[cur_paths_count - 1];
+        if (m.val[last_node][i]) {
+            path[cur_paths_count++] = i;
+            paths_recursive(len, cur_paths_count, path, m);
+            cur_paths_count--;
+        }
+    }
+}
+
+void print_paths(int n, Matrix m) {
+    int num_of_nodes = n + 1;
+    int *path = calloc(num_of_nodes, sizeof(int));
+    for (int i = 0; i < num_of_nodes; i++) {
+        path[0] = i;
+        paths_recursive(num_of_nodes, 1, path, m);
+    }
+    free(path);
+}
+
 
 Matrix reachability_matrix(Matrix m) {
     Matrix cur = {create_matrix(m.n), m.n};
@@ -211,9 +239,9 @@ Matrix strongly_connected_matrix(const Matrix m) {
     return reach;
 }
 
-int** strongly_connected_components(Matrix reach) {
+int **strongly_connected_components(Matrix reach) {
     int *visited = calloc(reach.n, sizeof(int));
-    int **components = calloc(reach.n + 1, sizeof(int*));
+    int **components = calloc(reach.n + 1, sizeof(int *));
     int size = 0;
     for (int i = 0; i < reach.n; i++) {
         if (visited[i] == 1)
@@ -252,18 +280,18 @@ void print_components(int **components) {
 
 Matrix get_condensation_graph(Matrix m, int **components) {
     int size = 0;
-    while(components[size] != NULL) size++;
-   /*
-    *  Representation of component
-    *  0: 1 4 6 -1
-    *  1: 0 2 5 -1
-    *  2: 7 -1
-    *  NULL
-    *
-    *  where 0, 1, 2 are indexes of components
-    *  and 1, 4, 6 are nodes that create a component
-    *  -1 and NULL are markers to indicate end of component
-    * */
+    while (components[size] != NULL) size++;
+    /*
+     *  Representation of component
+     *  0: 1 4 6 -1
+     *  1: 0 2 5 -1
+     *  2: 7 -1
+     *  NULL
+     *
+     *  where 0, 1, 2 are indexes of components
+     *  and 1, 4, 6 are nodes that create a component
+     *  -1 and NULL are markers to indicate end of component
+     * */
 
     Matrix condensation = {create_matrix(size), size};
     for (int i = 0; components[i] != NULL; i++) {
@@ -291,12 +319,12 @@ Matrix get_condensation_graph(Matrix m, int **components) {
 Matrix do_lab_task4(Matrix m) {
     printf("#4\n");
 
+    printf("4.2\n");
     printf("%-30s", "Nodes:");
     for (int i = 0; i < m.n; i++)
         printf("%-2d ", i + 1);
     printf("\n");
 
-    printf("4.2\n");
     int *in_degree = get_in_degree(m);
     printf("%-30s", "In-Degree of directed graph:");
     print_array(in_degree, m.n);
@@ -310,6 +338,7 @@ Matrix do_lab_task4(Matrix m) {
     printf("4.3\n");
     path2(m);
     paths3(m);
+//    print_paths(2, m);
 
     printf("4.4\n");
     Matrix reach = reachability_matrix(m);
@@ -319,7 +348,7 @@ Matrix do_lab_task4(Matrix m) {
 
     printf("4.5\n");
     Matrix strongly_connected = strongly_connected_matrix(m);
-    int** components = strongly_connected_components(strongly_connected);
+    int **components = strongly_connected_components(strongly_connected);
     print_components(components);
 
     printf("4.6\n");
