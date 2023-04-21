@@ -52,3 +52,11 @@
 </details>
 
 ---
+
+<details open><summary><h4>2.4</h4></summary>
+  
+![woops smth went wrong](https://github.com/erotourtes/ASD-labs/blob/main/2-2.4/report/example.png)
+
+</details>
+
+---
