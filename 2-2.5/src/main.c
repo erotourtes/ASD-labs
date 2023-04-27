@@ -13,8 +13,6 @@
 
 void handle_button_pressed1(Matrix *matrix);
 
-void handle_button_pressed2(X11 app, Matrix *matrix, int offset);
-
 int main() {
     X11 app = init("Lab #3");
 
@@ -40,8 +38,6 @@ int main() {
 
             if (text[0] == '1' || matrix.val == NULL)
                 handle_button_pressed1(&matrix);
-            else if (text[0] == '2')
-                handle_button_pressed2(app, &matrix, offset);
 
             int is_directed = text[0] == 'u' ? 0 : 1;
             draw_graph(app, matrix, is_directed, offset, offset);
@@ -57,12 +53,11 @@ int main() {
 void handle_button_pressed1(Matrix *matrix) {
     printf("\nGenerating matrix 1...\n");
     free_matrix(matrix);
-    matrix->val = get_boolean_matrix(10 + n3, 1.0 - n3 * 0.01 - n4 * 0.005 - 0.15, n1 * 1000 + n2 * 100 + n3 * 10 + n4).val;
+    double k =  1.0 - n3 * 0.01 - n4 * 0.005 - 0.15;
+    unsigned int seed = n1 * 1000 + n2 * 100 + n3 * 10 + n4;
+    matrix->val = get_boolean_matrix(10 + n3, k, seed).val;
     matrix->n = 10 + n3;
     print_matrix(*matrix, 1);
     dfs(*matrix);
     bfs(*matrix);
-}
-
-void handle_button_pressed2(X11 app, Matrix *matrix, int offset) {
 }
