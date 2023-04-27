@@ -7,14 +7,13 @@ set(CMAKE_C_STANDARD 11)
 find_package(X11 REQUIRED)
 include_directories(${X11_INCLUDE_DIR})
 
-add_library(stack src/Utils/queue.c src/Utils/queue.h)
-
-#Bring the Headers into the project
-include_directories(src/headers)
+add_library(app src/app/app.c src/app/app.h)
+add_library(matrix src/matrix/matrix.c src/matrix/matrix.h)
+add_library(queue src/Utils/queue.c src/Utils/queue.h)
+add_library(drawing src/drawing/draw_graph.c src/drawing/draw_graph.h src/drawing/graph_coords.c src/drawing/graph_coords.h)
 
 file(GLOB SOURCES "src/*.c")
 
 add_executable(2_2_5 src/main.c)
-target_link_libraries(2_2_5 ${X11_LIBRARIES})
-target_link_libraries(2_2_5 m)
-target_link_libraries(2_2_5 stack)
+target_link_libraries(2_2_5 ${X11_LIBRARIES} m)
+target_link_libraries(2_2_5 app drawing matrix queue)

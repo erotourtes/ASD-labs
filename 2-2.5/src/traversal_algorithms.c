@@ -1,6 +1,6 @@
 #include <malloc.h>
-#include "Matrix.h"
-#include "../Utils/queue.h"
+#include "Utils/queue.h"
+#include "matrix/matrix.h"
 
 void dfs_recursive(int *visited, int node, Matrix m) {
     if (visited[node]) return;
@@ -39,4 +39,5 @@ void bfs(Matrix m) {
     printf("\n");
 
     free_queue(&queue);
+    free(visited);
 }

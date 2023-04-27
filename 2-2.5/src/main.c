@@ -5,10 +5,11 @@
 #define n3 1
 #define n4 9
 
-#include "app/app.c"
-#include "matrix/matrix.c"
-#include "app/draw_graph.c"
-#include "matrix/traversal_algorithms.c"
+#include <X11/Xutil.h>
+#include "app/app.h"
+#include "drawing/draw_graph.h"
+#include "matrix/matrix.h"
+#include "traversal_algorithms.c"
 
 void handle_button_pressed1(Matrix *matrix);
 
@@ -56,7 +57,7 @@ int main() {
 void handle_button_pressed1(Matrix *matrix) {
     printf("\nGenerating matrix 1...\n");
     free_matrix(matrix);
-    matrix->val = get_boolean_matrix(10 + n3, 1.0 - n3 * 0.01 - n4 * 0.005 - 0.15).val;
+    matrix->val = get_boolean_matrix(10 + n3, 1.0 - n3 * 0.01 - n4 * 0.005 - 0.15, n1 * 1000 + n2 * 100 + n3 * 10 + n4).val;
     matrix->n = 10 + n3;
     print_matrix(*matrix, 1);
     dfs(*matrix);

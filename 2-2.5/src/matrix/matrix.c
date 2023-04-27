@@ -1,18 +1,18 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "Matrix.h"
-
-double **rand_matrix(int n);
+#include "matrix.h"
 
 int **mulmr(double k, double **matrix, int n);
 
-void free_matrix(Matrix *matrix);
+Matrix get_undirected_matrix(Matrix m);
 
-void print_matrix(Matrix matrix, int should_print_undirected);
+int **create_matrix(int n);
 
-Matrix get_boolean_matrix(int n, double k) {
-    srand(n1 * 1000 + n2 * 100 + n3 * 10 + n4);
+double **rand_matrix(int n);
+
+Matrix get_boolean_matrix(int n, double k, unsigned int seed) {
+    srand(seed);
 
     double **matrix = rand_matrix(n);
     int **boolean_matrix = mulmr(k, matrix, n);
@@ -119,7 +119,6 @@ Matrix multiply_matrix(const Matrix m1, const Matrix m2) {
 
     return new_matrix;
 }
-
 
 void add_matrix(Matrix target, const Matrix matrix) {
     for (int i = 0; i < target.n; i++)

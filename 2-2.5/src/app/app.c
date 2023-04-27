@@ -1,16 +1,10 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
-#include "X11.h"
+#include "app.h"
 
 #define width 650
 #define height 500
-
-X11 init(char *prog_name);
-
-void close_window(X11 app);
-
-void redraw(X11 app);
 
 X11 init(char *prog_name) {
     Display *dis = XOpenDisplay((char *) 0);
