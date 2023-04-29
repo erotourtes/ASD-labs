@@ -1,5 +1,5 @@
 #include <malloc.h>
-#include "Utils/queue.h"
+#include "Utils/deque.h"
 #include "matrix/matrix.h"
 
 typedef struct {
@@ -12,34 +12,39 @@ typedef struct {
     int count;
 } Edges;
 
-void dfs_recursive(int *visited, int node, Matrix m) {
-    if (visited[node]) return;
-    visited[node] = 1;
-
-    printf("%d ", node + 1);
-
-    for (int i = 0; i < m.n; i++)
-        if (m.val[node][i] && !visited[i])
-            dfs_recursive(visited, i, m);
-}
-
-Edges dfs(Matrix m, int start_node) {
-    int *visited = calloc(m.n, sizeof(int));
-    printf("DFS: ");
-    dfs_recursive(visited, 3, m);
-    printf("\n");
-    free(visited);
-}
-
-
 int *to_int(int val) {
     int *int_val = malloc(sizeof(int));
     *int_val = val;
     return int_val;
 }
 
+int dfs_rec(Matrix m, int *visited, int prev_node, int current_node, Edge *edges, int current_edge_count) {
+    visited[current_node] = 1;
+
+    if (prev_node != -1) // if it is not the first node
+        edges[current_edge_count++] = (Edge){prev_node, current_node};
+
+    for (int i = 0; i < m.n; i++) {
+        if (m.val[current_node][i] && !visited[i]) {
+            current_edge_count = dfs_rec(m, visited, current_node, i, edges, current_edge_count);
+        }
+    }
+
+    edges[current_edge_count++] = (Edge) {current_node, current_node};
+
+    return current_edge_count;
+}
+
+Edges dfs(Matrix m, int start_node) {
+    Edge *edges = malloc(sizeof(Edge) * (m.n - 1 + m.n)); // max number of edges is n - 1; + n for setting visited
+    int *visited = calloc(m.n, sizeof(int));
+    int current_edge_count = 0;
+    int count = dfs_rec(m, visited, -1, start_node, edges, current_edge_count);
+    return (Edges){edges, count};
+}
+
 Edges bfs(Matrix m, int start_node) {
-    Queue queue = get_queue(sizeof(int));
+    Deque queue = get_deque(sizeof(int));
     Edge *edges = malloc(sizeof(Edge) * (m.n - 1 + m.n)); // max number of edges is n - 1; + n for setting visited
     int current_edge_count = 0;
     int *visited = calloc(m.n, sizeof(int));
@@ -48,11 +53,9 @@ Edges bfs(Matrix m, int start_node) {
     visited[start_node] = 1;
     while (queue.size) {
         int *node = (int *) dequeue(&queue);
-//        printf("from %d \n", *node + 1);
 
         for (int i = 0; i < m.n; i++) {
             if (m.val[*node][i] && !visited[i]) {
-//                printf("\tto %d\n", i + 1);
                 edges[current_edge_count++] = (Edge){ *node, i };
 
                 enqueue(&queue, to_int(i));
@@ -63,7 +66,7 @@ Edges bfs(Matrix m, int start_node) {
         free(node);
     }
 
-    free_queue(&queue);
+    free_deque(&queue);
     free(visited);
 
     return (Edges){edges, current_edge_count};

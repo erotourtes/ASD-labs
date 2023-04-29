@@ -18,8 +18,6 @@ void handle_key_press_p(X11 app, Matrix matrix, Point *coordinates, int circle_r
 
 void handle_key_press_n(int *current_edge, int count);
 
-void handle_key_press_d(Edges *edges, Edges *bfs, Edges *dfs, int *current_edge);
-
 int main() {
     X11 app = init("Lab #3");
 
@@ -51,7 +49,21 @@ int main() {
             if (text[0] == 'q') break;
             else if (text[0] == 'n') handle_key_press_n(&current_edge, edges.count);
             else if (text[0] == 'p') handle_key_press_p(app, matrix, coordinates, circle_radius, &current_edge, edges);
-            else if (text[0] == 'd') handle_key_press_d(&edges, &bfs_edges, &dfs_edges, &current_edge);
+            else if (text[0] == 's') {
+                redraw(app);
+                draw_graph(app, matrix, coordinates, 1, circle_radius);
+                current_edge = -1;
+
+                if (edges.val == bfs_edges.val) {
+                    printf("Switched to DFS\n");
+                    edges.val = dfs_edges.val;
+                    edges.count = dfs_edges.count;
+                } else {
+                    printf("Switched to BFS\n");
+                    edges.val = bfs_edges.val;
+                    edges.count = bfs_edges.count;
+                }
+            }
 
             if (current_edge == -1) continue;
             int from_node = edges.val[current_edge].from;
@@ -93,16 +105,4 @@ void handle_key_press_p(X11 app, Matrix matrix, Point *coordinates, int circle_r
 void handle_key_press_n(int *current_edge, int count) {
     if (*current_edge + 1 < count)
         (*current_edge)++;
-}
-
-void handle_key_press_d(Edges *edges, Edges *bfs, Edges *dfs, int *current_edge) {
-    *current_edge = -1;
-
-    if (edges == bfs) {
-        edges->val = dfs->val;
-        edges->count = dfs->count;
-    } else {
-        edges->val = bfs->val;
-        edges->count = bfs->count;
-    }
 }
