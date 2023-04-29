@@ -39,7 +39,7 @@ int *to_int(int val) {
 
 Edges bfs(Matrix m, int start_node) {
     Queue queue = get_queue(sizeof(int));
-    Edge *edges = malloc(sizeof(Edge) * (m.n - 1));
+    Edge *edges = malloc(sizeof(Edge) * (m.n - 1 + m.n)); // max number of edges is n - 1; + n for setting visited
     int current_edge_count = 0;
     int *visited = calloc(m.n, sizeof(int));
 
@@ -47,18 +47,18 @@ Edges bfs(Matrix m, int start_node) {
     visited[start_node] = 1;
     while (queue.size) {
         int *node = (int *) dequeue(&queue);
-        printf("from %d \n", *node + 1);
+//        printf("from %d \n", *node + 1);
 
         for (int i = 0; i < m.n; i++) {
             if (m.val[*node][i] && !visited[i]) {
-                printf("\tto %d\n", i + 1);
+//                printf("\tto %d\n", i + 1);
                 edges[current_edge_count++] = (Edge){ *node, i };
 
                 enqueue(&queue, to_int(i));
                 visited[i] = 1;
             }
         }
-//        edges[current_edge_count++] = (Edge){ *node, *node };
+        edges[current_edge_count++] = (Edge){ *node, *node };
         free(node);
     }
 

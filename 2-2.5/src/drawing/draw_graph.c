@@ -183,7 +183,6 @@ void draw_graph(X11 app, Matrix matrix, Point *points, int is_directed, int circ
             if (matrix.val[i][j] == 0) continue;
             draw_right_line(app, matrix, points, i, j, circle_radius, is_directed);
             XSetForeground(app.dis, app.gc, rand() % USHRT_MAX);
-
         }
     }
 
@@ -192,22 +191,28 @@ void draw_graph(X11 app, Matrix matrix, Point *points, int is_directed, int circ
     draw_nodes(app, points, matrix.n, circle_radius, bg, fg);
 }
 
-void highlight_edge_between(X11 app, Matrix m, Point* points, int from_node, int to_node, int circle_radius) {
-    unsigned long active = 0xFFFF00;
-    unsigned long to_visit = 0x00FF00;
-    unsigned long visited = 0xFF0000;
+void highlight_edge_between(X11 app, Matrix m, Point *points, int from_node, int to_node, int circle_radius) {
+    unsigned long current_color = 0xF3DE8A;
+    unsigned long next_color = 0xEB9486;
+    unsigned long visited_color = 0x9381FF;
     unsigned long fg = 0x2b061e;
+    unsigned long arrow_color = 0x312A58;
 
-    XSetLineAttributes(app.dis, app.gc, 4, LineSolid, CapButt, JoinMiter);
-    XSetForeground(app.dis, app.gc, active);
+    XSetLineAttributes(app.dis, app.gc, 7, LineSolid, CapButt, JoinMiter);
+    XSetForeground(app.dis, app.gc, current_color);
 
     Point from_point = points[from_node];
     Point to_point = points[to_node];
 
-    draw_right_line(app, m, points, from_node, to_node, circle_radius, 1);
-
-    draw_node(app, from_point, from_node + 1, circle_radius, active, fg);
-    draw_node(app, to_point, to_node + 1, circle_radius, to_visit, fg);
+    int is_all_visited = from_node == to_node;
+    if (is_all_visited) {
+        draw_node(app, from_point, from_node + 1, circle_radius, visited_color, fg);
+    } else {
+        XSetForeground(app.dis, app.gc, arrow_color);
+        draw_right_line(app, m, points, from_node, to_node, circle_radius, 1);
+        draw_node(app, from_point, from_node + 1, circle_radius, current_color, fg);
+        draw_node(app, to_point, to_node + 1, circle_radius, next_color, fg);
+    }
 
     XSetLineAttributes(app.dis, app.gc, 2, LineSolid, CapButt, JoinMiter);
     XSetForeground(app.dis, app.gc, 0x000000);

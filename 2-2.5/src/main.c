@@ -14,6 +14,10 @@
 
 Matrix set_right_matrix();
 
+void handle_key_press_p(X11 app, Matrix matrix, Point *coordinates, int circle_radius, int* current_edge, Edges edges);
+
+void handle_key_press_n(int *current_edge, int count);
+
 int main() {
     X11 app = init("Lab #3");
 
@@ -26,7 +30,7 @@ int main() {
     int distance = 150;
 
     Matrix matrix = set_right_matrix();
-    Point *coordinates = get_coordinates(matrix.n, distance, 100, 100);
+    Point *coordinates = get_coordinates(matrix.n, distance, offset, offset);
 
     Edges edges = bfs(matrix, 0);
     int current_edge = -1;
@@ -42,14 +46,14 @@ int main() {
         if (event.type == KeyPress && XLookupString(&event.xkey, text, 255, &key, 0) == 1) {
             if (text[0] == 'q')
                 break;
-            if (text[0] == 'n') {
-                if (current_edge + 1 < edges.count)
-                    current_edge++;
-            } else continue;
+            else if (text[0] == 'n')
+                handle_key_press_n(&current_edge, edges.count);
+            else if (text[0] == 'p')
+                handle_key_press_p(app, matrix, coordinates, circle_radius, &current_edge, edges);
 
+            if (current_edge == -1) continue;
             int from_node = edges.val[current_edge].from;
             int to_node = edges.val[current_edge].to;
-            printf("From %d to %d\n", from_node + 1, to_node + 1);
             highlight_edge_between(app, matrix, coordinates, from_node, to_node, circle_radius);
         }
     }
@@ -69,4 +73,20 @@ Matrix set_right_matrix() {
     print_matrix(matrix, 1);
 
     return matrix;
+}
+
+void handle_key_press_p(X11 app, Matrix matrix, Point *coordinates, int circle_radius, int *current_edge, Edges edges) {
+    redraw(app);
+    draw_graph(app, matrix, coordinates, 1, circle_radius);
+    if (*current_edge > -1) (*current_edge)--;
+    for (int i = 0; i < *current_edge; i++) {
+        int from_node = edges.val[i].from;
+        int to_node = edges.val[i].to;
+        highlight_edge_between(app, matrix, coordinates, from_node, to_node, circle_radius);
+    }
+}
+
+void handle_key_press_n(int *current_edge, int count) {
+    if (*current_edge + 1 < count)
+        (*current_edge)++;
 }
