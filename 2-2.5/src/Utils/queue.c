@@ -2,11 +2,11 @@
 #include <stdlib.h>
 #include "queue.h"
 
-Queue get_queue() {
-    return (Queue) {NULL, NULL, 0};
+Queue get_queue(size_t value_size) {
+    return (Queue) {NULL, NULL, 0, value_size};
 }
 
-void enqueue(Queue *queue, int val) {
+void enqueue(Queue *queue, void *val) {
     Node *node = malloc(sizeof(Node));
     node->val = val;
     node->next = NULL;
@@ -22,7 +22,7 @@ void enqueue(Queue *queue, int val) {
     queue->size++;
 }
 
-int dequeue(Queue *queue) {
+void *dequeue(Queue *queue) {
     if (queue->head == NULL) {
         printf("Queue is empty!");
         exit(1);
@@ -30,7 +30,7 @@ int dequeue(Queue *queue) {
 
     Node *node = queue->head;
     queue->head = queue->head->next;
-    int val = node->val;
+    void* val = node->val;
     free(node);
     queue->size--;
     return val;
@@ -40,11 +40,15 @@ void free_queue(Queue *queue) {
     while (queue->head != NULL) {
         Node *node = queue->head;
         queue->head = queue->head->next;
+        free(node->val);
         free(node);
     }
+
+    queue->tail = NULL;
+    queue->size = 0;
 }
 
-int peek(Queue queue) {
+void *peek(Queue queue) {
     if (queue.head == NULL) {
         printf("Queue is empty!");
         exit(1);

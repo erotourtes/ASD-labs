@@ -3,23 +3,24 @@
 
 typedef struct Node Node;
 struct Node {
-    int val;
+    void *val;
     Node *next;
 };
 
 typedef struct {
     Node *head;
     Node *tail;
-    int size;
+    size_t size;
+    size_t value_size;
 } Queue;
 
-Queue get_queue();
+Queue get_queue(size_t value_size);
 
-void enqueue(Queue *queue, int val);
+void enqueue(Queue *queue, void *val);
 
-int dequeue(Queue *queue);
+void *dequeue(Queue *queue);
 
-int peek(Queue queue);
+void *peek(Queue queue);
 
 void free_queue(Queue *queue);
 

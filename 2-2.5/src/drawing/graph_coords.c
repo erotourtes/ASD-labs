@@ -27,7 +27,7 @@ void compress(int i, int rest, int *distance, int *num_in_row) {
     }
 }
 
-Point *get_coordinates(int n, int distance) {
+Point *get_coordinates(int n, int distance, int offsetX, int offsetY) {
     Point *points = malloc(n * sizeof(Point));
 
     int k = n - 1; // number of points without center
@@ -56,6 +56,11 @@ Point *get_coordinates(int n, int distance) {
 
     points[cur].x = ((num_in_row - 1) * distance + (rest > 1 ? distance : 0)) / 2.0;
     points[cur].y = ((num_in_row - 1) * distance) / 2.0;
+
+    for (int i = 0; i < n; i++) {
+        points[i].x += offsetX;
+        points[i].y += offsetY;
+    }
 
     return points;
 }

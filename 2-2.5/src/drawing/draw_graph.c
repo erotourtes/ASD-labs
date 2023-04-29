@@ -6,31 +6,28 @@
 #include "draw_graph.h"
 #include "graph_coords.h"
 
-void applyOffset(Point *points, int n, int offsetX, int offsetY) {
-    for (int i = 0; i < n; i++) {
-        points[i].x += offsetX;
-        points[i].y += offsetY;
-    }
-}
+typedef unsigned long u64;
 
-void draw_nodes(X11 app, Point *points, int len, int circle_radius) {
+void draw_node(X11 app, Point point, int number, int circle_radius, u64 bg, u64 fg) {
     int ch_x_offset = 3;
     int ch_y_offset = 5;
 
-    unsigned long bg = 0x83c9f4;
-    unsigned long fg = 0x2b061e;
+    XSetForeground(app.dis, app.gc, bg);
 
+    XFillArc(app.dis, app.win, app.gc, point.x - circle_radius, point.y - circle_radius,
+             circle_radius * 2, circle_radius * 2, 0, 360 * 64);
+
+    XSetForeground(app.dis, app.gc, fg);
+    char name[2];
+    sprintf(name, "%d", number);
+    XDrawString(app.dis, app.win, app.gc, point.x - ch_x_offset, point.y + ch_y_offset, name,
+                (number < 9 ? 1 : 2));
+
+}
+
+void draw_nodes(X11 app, Point *points, int len, int circle_radius, unsigned long bg, unsigned long fg) {
     for (int i = 0; i < len; i++) {
-        XSetForeground(app.dis, app.gc, bg);
-
-        XFillArc(app.dis, app.win, app.gc, points[i].x - circle_radius, points[i].y - circle_radius,
-                 circle_radius * 2, circle_radius * 2, 0, 360 * 64);
-
-        XSetForeground(app.dis, app.gc, fg);
-        char name[2];
-        sprintf(name, "%d", i + 1);
-        XDrawString(app.dis, app.win, app.gc, points[i].x - ch_x_offset, points[i].y + ch_y_offset, name,
-                    (i < 9 ? 1 : 2));
+        draw_node(app, points[i], i + 1, circle_radius, bg, fg);
     }
 }
 
@@ -128,15 +125,13 @@ void draw_through_angle(X11 app, Point *points, int i, int j, int circle_radius,
     double offsetX = 2 * circle_radius + log10(abs(dy));
     double offsetY = 2 * circle_radius + log10(abs(dx));
 
-    int rand_offset = rand() % circle_radius * to_opposite;
-
     if (points[i].x > points[j].x && points[i].y > points[j].y) {
-        offsetY = -1 * offsetY + rand_offset;
+        offsetY = -1 * offsetY;
     } else if (points[i].x < points[j].x && points[i].y > points[j].y) {
-        offsetY = to_opposite * offsetY + rand_offset;
+        offsetY = to_opposite * offsetY;
         offsetX = to_opposite * offsetX;
     } else if (points[i].x < points[j].x && points[i].y < points[j].y) {
-        offsetX = to_opposite * offsetX + rand_offset;
+        offsetX = to_opposite * offsetX;
         offsetY = (to_opposite == -1 ? 1 : -1) * offsetY;
     }
 
@@ -165,36 +160,55 @@ void draw_through_angle(X11 app, Point *points, int i, int j, int circle_radius,
         draw_line(app, middle, points[j]);
 }
 
-void draw_graph(X11 app, Matrix matrix, int is_directed, int offsetX, int offsetY) {
-    Point *points = get_coordinates(matrix.n, 150);
-    applyOffset(points, matrix.n, offsetX, offsetY);
+void draw_right_line(X11 app, Matrix matrix, Point *points, int i, int j, int circle_radius, int is_directed) {
+    if (i == j)
+        draw_loop(app, circle_radius, (Point) {points[i].x, points[i].y}, is_directed);
+    else if (is_through_center(points, i, j, matrix.n) || is_overlapping(points, matrix.n, i, j))
+        draw_through_angle(app, points, i, j, circle_radius, is_directed, 0);
+    else if (is_directed && is_arrows_overlaps(matrix, i, j))
+        draw_through_angle(app, points, i, j, circle_radius, is_directed, 1);
+    else {
+        if (is_directed)
+            draw_arrow_line(app, points[i], points[j], circle_radius);
+        else
+            draw_line(app, points[i], points[j]);
+    }
+}
 
-    int circle_radius = 20;
-
+void draw_graph(X11 app, Matrix matrix, Point *points, int is_directed, int circle_radius) {
     XSetLineAttributes(app.dis, app.gc, 2, LineSolid, CapButt, JoinMiter);
 
     for (int i = 0; i < matrix.n; i++) {
         for (int j = 0; j < matrix.n; j++) {
             if (matrix.val[i][j] == 0) continue;
-
+            draw_right_line(app, matrix, points, i, j, circle_radius, is_directed);
             XSetForeground(app.dis, app.gc, rand() % USHRT_MAX);
 
-            if (i == j)
-                draw_loop(app, circle_radius, (Point) {points[i].x, points[i].y}, is_directed);
-            else if (is_through_center(points, i, j, matrix.n) || is_overlapping(points, matrix.n, i, j))
-                draw_through_angle(app, points, i, j, circle_radius, is_directed, 0);
-            else if (is_directed && is_arrows_overlaps(matrix, i, j))
-                draw_through_angle(app, points, i, j, circle_radius, is_directed, 1);
-            else {
-                if (is_directed)
-                    draw_arrow_line(app, points[i], points[j], circle_radius);
-                else
-                    draw_line(app, points[i], points[j]);
-            }
         }
     }
 
-    draw_nodes(app, points, matrix.n, circle_radius);
+    unsigned long bg = 0x83c9f4;
+    unsigned long fg = 0x2b061e;
+    draw_nodes(app, points, matrix.n, circle_radius, bg, fg);
+}
 
-    free(points);
+void highlight_edge_between(X11 app, Matrix m, Point* points, int from_node, int to_node, int circle_radius) {
+    unsigned long active = 0xFFFF00;
+    unsigned long to_visit = 0x00FF00;
+    unsigned long visited = 0xFF0000;
+    unsigned long fg = 0x2b061e;
+
+    XSetLineAttributes(app.dis, app.gc, 4, LineSolid, CapButt, JoinMiter);
+    XSetForeground(app.dis, app.gc, active);
+
+    Point from_point = points[from_node];
+    Point to_point = points[to_node];
+
+    draw_right_line(app, m, points, from_node, to_node, circle_radius, 1);
+
+    draw_node(app, from_point, from_node + 1, circle_radius, active, fg);
+    draw_node(app, to_point, to_node + 1, circle_radius, to_visit, fg);
+
+    XSetLineAttributes(app.dis, app.gc, 2, LineSolid, CapButt, JoinMiter);
+    XSetForeground(app.dis, app.gc, 0x000000);
 }
