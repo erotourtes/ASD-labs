@@ -2,6 +2,16 @@
 #include "Utils/queue.h"
 #include "matrix/matrix.h"
 
+typedef struct {
+    int from;
+    int to;
+} Edge;
+
+typedef struct {
+    Edge *val;
+    int count;
+} Edges;
+
 void dfs_recursive(int *visited, int node, Matrix m) {
     if (visited[node]) return;
     visited[node] = 1;
@@ -13,7 +23,7 @@ void dfs_recursive(int *visited, int node, Matrix m) {
             dfs_recursive(visited, i, m);
 }
 
-void dfs(Matrix m) {
+Edges dfs(Matrix m, int start_node) {
     int *visited = calloc(m.n, sizeof(int));
     printf("DFS: ");
     dfs_recursive(visited, 3, m);
@@ -21,15 +31,6 @@ void dfs(Matrix m) {
     free(visited);
 }
 
-typedef struct {
-    int from;
-    int to;
-} Edge;
-
-typedef struct {
-    Edge *val;
-    int count;
-} Edges;
 
 int *to_int(int val) {
     int *int_val = malloc(sizeof(int));

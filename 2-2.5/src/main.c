@@ -14,9 +14,11 @@
 
 Matrix set_right_matrix();
 
-void handle_key_press_p(X11 app, Matrix matrix, Point *coordinates, int circle_radius, int* current_edge, Edges edges);
+void handle_key_press_p(X11 app, Matrix matrix, Point *coordinates, int circle_radius, int *current_edge, Edges edges);
 
 void handle_key_press_n(int *current_edge, int count);
+
+void handle_key_press_d(Edges *edges, Edges *bfs, Edges *dfs, int *current_edge);
 
 int main() {
     X11 app = init("Lab #3");
@@ -32,7 +34,9 @@ int main() {
     Matrix matrix = set_right_matrix();
     Point *coordinates = get_coordinates(matrix.n, distance, offset, offset);
 
-    Edges edges = bfs(matrix, 0);
+    Edges bfs_edges = bfs(matrix, 0);
+    Edges dfs_edges = dfs(matrix, 0);
+    Edges edges = bfs_edges;
     int current_edge = -1;
 
     while (1) {
@@ -44,12 +48,10 @@ int main() {
         }
         // KeyPress event
         if (event.type == KeyPress && XLookupString(&event.xkey, text, 255, &key, 0) == 1) {
-            if (text[0] == 'q')
-                break;
-            else if (text[0] == 'n')
-                handle_key_press_n(&current_edge, edges.count);
-            else if (text[0] == 'p')
-                handle_key_press_p(app, matrix, coordinates, circle_radius, &current_edge, edges);
+            if (text[0] == 'q') break;
+            else if (text[0] == 'n') handle_key_press_n(&current_edge, edges.count);
+            else if (text[0] == 'p') handle_key_press_p(app, matrix, coordinates, circle_radius, &current_edge, edges);
+            else if (text[0] == 'd') handle_key_press_d(&edges, &bfs_edges, &dfs_edges, &current_edge);
 
             if (current_edge == -1) continue;
             int from_node = edges.val[current_edge].from;
@@ -61,6 +63,8 @@ int main() {
     close_window(app);
     free_matrix(&matrix);
     free(coordinates);
+    free(bfs_edges.val);
+    free(dfs_edges.val);
     printf("Bye!");
     return 0;
 }
@@ -89,4 +93,16 @@ void handle_key_press_p(X11 app, Matrix matrix, Point *coordinates, int circle_r
 void handle_key_press_n(int *current_edge, int count) {
     if (*current_edge + 1 < count)
         (*current_edge)++;
+}
+
+void handle_key_press_d(Edges *edges, Edges *bfs, Edges *dfs, int *current_edge) {
+    *current_edge = -1;
+
+    if (edges == bfs) {
+        edges->val = dfs->val;
+        edges->count = dfs->count;
+    } else {
+        edges->val = bfs->val;
+        edges->count = bfs->count;
+    }
 }
