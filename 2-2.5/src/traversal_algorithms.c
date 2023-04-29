@@ -1,5 +1,5 @@
 #include <malloc.h>
-#include "Utils/deque.h"
+#include "Utils/queue.h"
 #include "matrix/matrix.h"
 
 typedef struct {
@@ -44,7 +44,7 @@ Edges dfs(Matrix m, int start_node) {
 }
 
 Edges bfs(Matrix m, int start_node) {
-    Deque queue = get_deque(sizeof(int));
+    Queue queue = get_queue(sizeof(int));
     Edge *edges = malloc(sizeof(Edge) * (m.n - 1 + m.n)); // max number of edges is n - 1; + n for setting visited
     int current_edge_count = 0;
     int *visited = calloc(m.n, sizeof(int));
@@ -66,7 +66,7 @@ Edges bfs(Matrix m, int start_node) {
         free(node);
     }
 
-    free_deque(&queue);
+    free_queue(&queue);
     free(visited);
 
     return (Edges){edges, current_edge_count};
