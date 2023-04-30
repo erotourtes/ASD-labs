@@ -18,6 +18,8 @@ void handle_key_press_p(X11 app, Matrix matrix, Point *coordinates, int circle_r
 
 void handle_key_press_n(int *current_edge, int count);
 
+void print_edges(Edges edges, Matrix matrix);
+
 int main() {
     X11 app = init("Lab #3");
 
@@ -34,6 +36,14 @@ int main() {
 
     Edges bfs_edges = bfs(matrix, 0);
     Edges dfs_edges = dfs(matrix, 0);
+
+    printf("BFS edges:\n");
+    print_edges(bfs_edges, matrix);
+
+    printf("DFS edges:\n");
+    print_edges(dfs_edges, matrix);
+    printf("\n");
+
     Edges edges = bfs_edges;
     int current_edge = -1;
 
@@ -105,4 +115,20 @@ void handle_key_press_p(X11 app, Matrix matrix, Point *coordinates, int circle_r
 void handle_key_press_n(int *current_edge, int count) {
     if (*current_edge + 1 < count)
         (*current_edge)++;
+}
+
+void print_edges(const Edges edges, const Matrix matrix) {
+    for (int i = 0; i < matrix.n; i++) {
+        for (int j = 0; j < matrix.n; j++) {
+            int is_edge = 0;
+            for (int k = 0; k < edges.count; k++) {
+                if (edges.val[k].from == i && edges.val[k].to == j && i != j) {
+                    is_edge = 1;
+                    break;
+                }
+            }
+            printf("%d ", is_edge);
+        }
+        printf("\n");
+    }
 }
