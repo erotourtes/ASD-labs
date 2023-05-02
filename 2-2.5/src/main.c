@@ -20,6 +20,8 @@ void handle_key_press_n(int *current_edge, int count);
 
 void print_edges(Edges edges, Matrix matrix);
 
+void print_order_list(Edges edges);
+
 int main() {
     X11 app = init("Lab #3");
 
@@ -36,6 +38,10 @@ int main() {
 
     Edges bfs_edges = bfs(matrix, 0);
     Edges dfs_edges = dfs(matrix, 0);
+    printf("BFS order: \t");
+    print_order_list(bfs_edges);
+    printf("DFS order: \t");
+    print_order_list(dfs_edges);
 
     printf("BFS edges:\n");
     print_edges(bfs_edges, matrix);
@@ -131,4 +137,13 @@ void print_edges(const Edges edges, const Matrix matrix) {
         }
         printf("\n");
     }
+}
+
+void print_order_list(Edges edges) {
+    int counter = 1;
+    for (int i = 0; i < edges.count; i++) {
+        Edge ed = edges.val[i];
+        if (ed.from == ed.to) printf("%d: %d \t", counter++, ed.to + 1);
+    }
+    printf("\n");
 }
