@@ -26,4 +26,6 @@ void copy_matrix(Matrix target, Matrix matrix);
 
 void to_boolean_matrix(Matrix m);
 
+void set_to_zero(Matrix m);
+
 #endif //INC_2_2_5_MATRIX_H

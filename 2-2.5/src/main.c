@@ -76,6 +76,7 @@ int main() {
                 edges = traversal_function(matrix, 0);
                 current_edge = -1;
                 print_task_result(edges, matrix);
+                set_to_zero(visited);
             }
 
             if (current_edge == -1) continue;
@@ -125,8 +126,10 @@ Edges change_component(Edges edges, Matrix matrix, Matrix visited, X11 app, Poin
         }
     }
 
-    if (unvisited_node == -1)
+    if (unvisited_node == -1) {
+        set_to_zero(visited);
         return edges;
+    }
 
     free(edges.val);
     edges.val = NULL;

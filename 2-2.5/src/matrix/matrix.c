@@ -138,3 +138,11 @@ void to_boolean_matrix(Matrix m) {
             if (m.val[i][j] != 0)
                 m.val[i][j] = 1;
 }
+
+void set_to_zero(Matrix m) {
+    for (int i = 0; i < m.n; i++) {
+        for (int j = 0; j < m.n; j++) {
+            m.val[i][j] = 0;
+        }
+    }
+}
