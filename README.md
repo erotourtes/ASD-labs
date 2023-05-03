@@ -66,7 +66,7 @@
 ![woops smth went wrong](https://github.com/erotourtes/ASD-labs/blob/main/2-2.5/report/example.gif)
 > updated video
 
-[example_updated.webm](https://user-images.githubusercontent.com/67370189/235863039-464c0327-a6ef-4582-9c1c-530c5933474c.webm)
+[example_updated(1).webm](https://user-images.githubusercontent.com/67370189/235871917-ec9001be-0db3-45e0-9687-2096e73904a5.webm)
 
 </details>
 
