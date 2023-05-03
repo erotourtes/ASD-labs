@@ -68,7 +68,7 @@ int main() {
                 handle_key_press_p(app, matrix, coordinates, circle_radius, &current_edge, edges);
             else if (text[0] == 's') {
                 redraw(app);
-                draw_graph(app, matrix, coordinates, 0, circle_radius);
+                draw_graph(app, matrix, coordinates, 1, circle_radius);
                 if (traversal_function == &bfs) traversal_function = &dfs;
                 else traversal_function = &bfs;
                 free(edges.val);
@@ -136,7 +136,7 @@ Edges change_component(Edges edges, Matrix matrix, Matrix visited, X11 app, Poin
     printf("\nNew component: %d\n", unvisited_node + 1);
     *current_edge = -1;
     redraw(app);
-    draw_graph(app, matrix, coordinates, 0, circle_radius);
+    draw_graph(app, matrix, coordinates, 1, circle_radius);
 
     return traversal_function(matrix, unvisited_node);
 }
