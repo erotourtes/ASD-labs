@@ -40,6 +40,7 @@ Edges dfs(Matrix m, int start_node) {
     int *visited = calloc(m.n, sizeof(int));
     int current_edge_count = 0;
     int count = dfs_rec(m, visited, -1, start_node, edges, current_edge_count);
+    free(visited);
     return (Edges){edges, count};
 }
 

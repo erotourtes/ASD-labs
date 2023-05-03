@@ -22,6 +22,11 @@ void print_edges(Edges edges, Matrix matrix);
 
 void print_order_list(Edges edges);
 
+Edges change_component(Edges edges, Matrix matrix, Matrix visited, X11 app, Point *coordinates, int circle_radius,
+                       int *current_edge, Edges (*traversal_function)(Matrix, int));
+
+void print_task_result(Edges edges, Matrix matrix);
+
 int main() {
     X11 app = init("Lab #3");
 
@@ -36,22 +41,12 @@ int main() {
     Matrix matrix = set_right_matrix();
     Point *coordinates = get_coordinates(matrix.n, distance, offset, offset);
 
-    Edges bfs_edges = bfs(matrix, 0);
-    Edges dfs_edges = dfs(matrix, 0);
-    printf("BFS order: \t");
-    print_order_list(bfs_edges);
-    printf("DFS order: \t");
-    print_order_list(dfs_edges);
+    Matrix visited = init_matrix(matrix.n);
 
-    printf("BFS edges:\n");
-    print_edges(bfs_edges, matrix);
-
-    printf("DFS edges:\n");
-    print_edges(dfs_edges, matrix);
-    printf("\n");
-
-    Edges edges = bfs_edges;
+    Edges (*traversal_function)(Matrix, int) = &bfs;
+    Edges edges = traversal_function(matrix, 0);
     int current_edge = -1;
+    print_task_result(edges, matrix);
 
     while (1) {
         XNextEvent(app.dis, &event);
@@ -63,22 +58,24 @@ int main() {
         // KeyPress event
         if (event.type == KeyPress && XLookupString(&event.xkey, text, 255, &key, 0) == 1) {
             if (text[0] == 'q') break;
-            else if (text[0] == 'n') handle_key_press_n(&current_edge, edges.count);
-            else if (text[0] == 'p') handle_key_press_p(app, matrix, coordinates, circle_radius, &current_edge, edges);
+            else if (text[0] == 'n') handle_key_press_n(&current_edge, edges.count); // next for current traversal
+            else if (text[0] == 'c') {
+                edges = change_component(edges, matrix, visited, app, coordinates, circle_radius, &current_edge,
+                                         traversal_function);
+                print_task_result(edges, matrix);
+
+            } else if (text[0] == 'p')
+                handle_key_press_p(app, matrix, coordinates, circle_radius, &current_edge, edges);
             else if (text[0] == 's') {
                 redraw(app);
-                draw_graph(app, matrix, coordinates, 1, circle_radius);
+                draw_graph(app, matrix, coordinates, 0, circle_radius);
+                if (traversal_function == &bfs) traversal_function = &dfs;
+                else traversal_function = &bfs;
+                free(edges.val);
+                edges.val = NULL;
+                edges = traversal_function(matrix, 0);
                 current_edge = -1;
-
-                if (edges.val == bfs_edges.val) {
-                    printf("Switched to DFS\n");
-                    edges.val = dfs_edges.val;
-                    edges.count = dfs_edges.count;
-                } else {
-                    printf("Switched to BFS\n");
-                    edges.val = bfs_edges.val;
-                    edges.count = bfs_edges.count;
-                }
+                print_task_result(edges, matrix);
             }
 
             if (current_edge == -1) continue;
@@ -90,11 +87,55 @@ int main() {
 
     close_window(app);
     free_matrix(&matrix);
+    free_matrix(&visited);
+    free(edges.val);
     free(coordinates);
-    free(bfs_edges.val);
-    free(dfs_edges.val);
     printf("Bye!");
     return 0;
+}
+
+void print_task_result(Edges edges, Matrix matrix) {
+    printf("\n\nTask result(for %d): \n", edges.val[0].from + 1);
+    printf("Order list: \t");
+    print_order_list(edges);
+    printf("\nEdges: \n");
+    print_edges(edges, matrix);
+}
+
+// Bloated code, but it's ok for now
+Edges change_component(Edges edges, Matrix matrix, Matrix visited, X11 app, Point *coordinates, int circle_radius,
+                       int *current_edge, Edges (*traversal_function)(Matrix, int)) {
+    // Mark all visited nodes
+    for (int k = 0; k < edges.count; k++) {
+        int from = edges.val[k].from;
+        int to = edges.val[k].to;
+        if (from == to) visited.val[from][to] = 1;
+    }
+
+    // Find unvisited node
+    int unvisited_node = -1;
+    for (int i = 0; i < matrix.n; i++) {
+        if (unvisited_node != -1) break;
+        unvisited_node = i;
+        for (int j = 0; j < matrix.n; j++) {
+            if (visited.val[i][j] == 1) {
+                unvisited_node = -1;
+                break;
+            }
+        }
+    }
+
+    if (unvisited_node == -1)
+        return edges;
+
+    free(edges.val);
+    edges.val = NULL;
+    printf("\nNew component: %d\n", unvisited_node + 1);
+    *current_edge = -1;
+    redraw(app);
+    draw_graph(app, matrix, coordinates, 0, circle_radius);
+
+    return traversal_function(matrix, unvisited_node);
 }
 
 Matrix set_right_matrix() {
