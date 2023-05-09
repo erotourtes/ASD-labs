@@ -28,4 +28,6 @@ void to_boolean_matrix(Matrix m);
 
 void set_to_zero(Matrix m);
 
+Matrix get_weights(Matrix A);
+
 #endif //INC_2_2_5_MATRIX_H

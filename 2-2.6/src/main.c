@@ -41,6 +41,11 @@ int main() {
     Matrix matrix = set_right_matrix();
     Point *coordinates = get_coordinates(matrix.n, distance, offset, offset);
 
+    Matrix weights = get_weights(matrix);
+    print_matrix(weights, 0);
+    free_matrix(&weights);
+
+
     Matrix visited = init_matrix(matrix.n);
 
     Edges (*traversal_function)(Matrix, int) = &bfs;
@@ -143,7 +148,7 @@ Edges change_component(Edges edges, Matrix matrix, Matrix visited, X11 app, Poin
 
 Matrix set_right_matrix() {
     printf("\nGenerating matrix \n");
-    double k = 1.0 - n3 * 0.01 - n4 * 0.005 - 0.15;
+    double k = 1.0 - n3 * 0.01 - n4 * 0.005 - 0.05;
     unsigned int seed = n1 * 1000 + n2 * 100 + n3 * 10 + n4;
     Matrix matrix = get_boolean_matrix(10 + n3, k, seed);
     print_matrix(matrix, 1);
