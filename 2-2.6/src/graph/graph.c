@@ -32,28 +32,6 @@ GraphNode *graph_get_node(Graph g, int value) {
     return NULL;
 }
 
-GraphEdge *graph_get_minimal_edge(GraphNode *node, const int *except) {
-    GraphEdge *min = (GraphEdge *) list_get(node->edges, 0);
-    for (int i = 1; i < node->edges->size; i++) {
-        GraphEdge *edge = (GraphEdge *) list_get(node->edges, i);
-        if (except[edge->to] == 0 && edge->weight < min->weight)
-            min = edge;
-    }
-    return min;
-}
-
-List *graph_get_all_edges(Graph g) {
-    List *edges = list_init();
-    for (int i = 0; i < g.size; i++) {
-        GraphNode *node = graph_get_node(g, i);
-        for (int j = 0; j < node->edges->size; j++) {
-            GraphEdge *edge = (GraphEdge *) list_get(node->edges, j);
-            list_add(edges, edge);
-        }
-    }
-    return edges;
-}
-
 void graph_create_edge(Graph *g, int from, int to, int weight) {
     GraphNode *node = graph_get_node(*g, from);
     GraphEdge *edge = (GraphEdge *) malloc(sizeof(GraphEdge));
@@ -62,16 +40,6 @@ void graph_create_edge(Graph *g, int from, int to, int weight) {
     edge->weight = weight;
     if (node->edges == NULL) node->edges = list_init();
     list_add(node->edges, edge);
-}
-
-List *graph_get_all_values(Graph *g) {
-    List *values = list_init();
-    List *nodes = g->nodes;
-    for (int i = 0; i < nodes->size; i++) {
-        GraphNode *node = list_get(nodes, i);
-        list_add(values, node);
-    }
-    return values;
 }
 
 Graph get_graph_from(const Matrix m, const Matrix weights) {

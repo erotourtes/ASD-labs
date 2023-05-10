@@ -7,19 +7,23 @@ void graph_to_matrix(Graph *g) {
     for (int i = 0; i < g->size; i++)
         m[i] = (int *) calloc(g->size, sizeof(int));
 
-    List *values = graph_get_all_values(g);
     for (int i = 0; i < g->size; i++) {
-        GraphNode *cur_node = list_get(values, i);
+        GraphNode *cur_node = list_get(g->nodes, i);
         for (int j = 0; j < cur_node->edges->size; j++) {
             GraphEdge *edge = (GraphEdge *) list_get(cur_node->edges, j);
             m[edge->from][edge->to] = edge->weight;
+            m[edge->to][edge->from] = edge->weight;
         }
     }
 
     printf("Graph matrix:\n\n\n");
-    print_matrix((Matrix){m, g->size}, 1);
+    for (int i = 0; i < g->size; i++) {
+        for (int j = 0; j < g->size; j++)
+            printf("%-2d ", m[i][j]);
 
-    free(values);
+        printf("\n");
+    }
+
     for (int i = 0; i < g->size; i++)
         free(m[i]);
     free(m);
@@ -27,9 +31,8 @@ void graph_to_matrix(Graph *g) {
 
 GraphEdge *minimum_edge(Graph spanning_tree, Graph original, const int *visited) {
     GraphEdge *minimal = NULL;
-    List *values = graph_get_all_values(&spanning_tree);
     for (int j = 0; j < spanning_tree.size; j++) {
-        GraphNode *cur_node = list_get(values, j);
+        GraphNode *cur_node = list_get(spanning_tree.nodes, j);
         GraphNode *node = graph_get_node(original, cur_node->value);
 
         for (int k = 0; k < node->edges->size; k++) {
@@ -39,7 +42,6 @@ GraphEdge *minimum_edge(Graph spanning_tree, Graph original, const int *visited)
         }
     }
 
-    free(values);
     return minimal;
 }
 
@@ -59,7 +61,7 @@ void minimum_spanning_tree(Graph original) {
         graph_create_edge(&spanning_tree, minimal->from, minimal->to, minimal->weight);
     }
 
-//    graph_to_matrix(&spanning_tree);
+    graph_to_matrix(&spanning_tree);
 
     free(visited);
     free_graph(&spanning_tree);
