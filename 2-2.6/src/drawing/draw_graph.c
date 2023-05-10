@@ -27,20 +27,19 @@ void draw_node(X11 app, Point point, int number, int circle_radius, u64 bg, u64 
 
 }
 
-void print_weight(X11 app, Point p, int number) {
+u64 last_color = 0;
+void draw_weight(X11 app, Point p, int number) {
     char text[4];
     sprintf(text, "%d", number);
 
     // drawing square to better see the text
-    XSetBackground(app.dis, app.gc, 0xFFFFFF);
     XSetForeground(app.dis, app.gc, 0xFFFFFF);
     XFillRectangle(app.dis, app.win, app.gc, p.x, p.y - 10, 12, 12);
 
     // drawing text
-    XSetForeground(app.dis, app.gc, 0xFF0000);
+    XSetForeground(app.dis, app.gc, last_color);
     XDrawString(app.dis, app.win, app.gc, p.x, p.y, text, number == 0 ? 1 : (int) (log10(number) + 1));
 }
-
 
 void draw_nodes(X11 app, Point *points, int len, int circle_radius, unsigned long bg, unsigned long fg) {
     for (int i = 0; i < len; i++) {
@@ -107,14 +106,14 @@ void draw_loop(X11 app, double circle_radius, int weight, Point p, int is_direct
     if (is_directed)
         draw_head_arrow(app, arrow_point, -15);
 
-    print_weight(app, (Point){ p.x - arc_width / 2, p.y - arc_height / 2 }, weight);
+    draw_weight(app, (Point) {p.x - arc_width / 2, p.y - arc_height / 2}, weight);
 }
 
 void draw_line(X11 app, Point p1, Point p2, int weight) {
     XDrawLine(app.dis, app.win, app.gc, p1.x, p1.y, p2.x, p2.y);
     if (weight != -1) {
         Point p = (Point) {(p1.x + p2.x) / 2, (p1.y + p2.y) / 2};
-        print_weight(app, p, weight);
+        draw_weight(app, p, weight);
     }
 }
 
@@ -183,7 +182,7 @@ draw_through_angle(X11 app, Point *points, int i, int j, int weight, int circle_
     else
         draw_line(app, middle, points[j], -1);
 
-    print_weight(app, middle, weight);
+    draw_weight(app, middle, weight);
 }
 
 void
@@ -210,7 +209,8 @@ void draw_graph(X11 app, Matrix matrix, Matrix weights, Point *points, int is_di
             if (matrix.val[i][j] == 0) continue;
             int weight = weights.val[i][j];
             draw_right_line(app, matrix, points, i, j, weight, circle_radius, is_directed);
-            XSetForeground(app.dis, app.gc, rand() % USHRT_MAX);
+            last_color = rand() % USHRT_MAX;
+            XSetForeground(app.dis, app.gc, last_color);
         }
     }
 
