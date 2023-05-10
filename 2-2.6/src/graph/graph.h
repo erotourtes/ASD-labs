@@ -24,4 +24,8 @@ typedef struct {
     int size;
 } Graph;
 
+Graph get_graph_from(Matrix m, Matrix weights);
+
+void free_graph(Graph *g);
+
 #endif //INC_2_2_5_GRAPH_H

@@ -5,12 +5,12 @@
 #include "graph.h"
 #include <stdlib.h>
 
-Graph get_graph_from(Matrix m, Matrix weights) {
+Graph get_graph_from(const Matrix m, const Matrix weights) {
     Graph g = {list_init(), 0};
 
     for (int i = 0; i < m.n; i++) {
         List *edges = list_init();
-        for (int j = 0; j < m.n; i++) {
+        for (int j = 0; j < m.n; j++) {
             if (m.val[i][j] != 1) continue;
             GraphEdge *edge = (GraphEdge *) malloc(sizeof(GraphEdge));
             edge->from = i;
@@ -25,14 +25,16 @@ Graph get_graph_from(Matrix m, Matrix weights) {
         list_add(g.nodes, node);
     }
 
+    g.size = g.nodes->size;
+
     return g;
 }
 
-void clear_graph(Graph *g) {
+void free_graph(Graph *g) {
     for (int i = 0; i < g->size; i++) {
-        GraphNode *node = list_remove(g->nodes, i);
+        GraphNode *node = (GraphNode *) list_remove(g->nodes, 0);
         list_clear(node->edges);
-        free(node->edges);
+        node->edges = NULL;
         free(node);
     }
     free(g->nodes);

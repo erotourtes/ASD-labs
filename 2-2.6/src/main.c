@@ -11,6 +11,7 @@
 #include "drawing/graph_coords.h"
 #include "matrix/matrix.h"
 #include "traversal_algorithms.c"
+#include "graph/graph.h"
 
 Matrix set_right_matrix();
 
@@ -43,8 +44,9 @@ int main() {
 
     Matrix weights = get_weights(matrix);
     print_matrix(weights, 0);
+    Graph g = get_graph_from(matrix, weights);
+    free_graph(&g);
     free_matrix(&weights);
-
 
     Matrix visited = init_matrix(matrix.n);
 

@@ -18,14 +18,12 @@ void list_add(List *l, void *value) {
     node->value = value;
     node->next = NULL;
 
-    if (l->head == NULL) {
+    if (l->head == NULL)
         l->head = node;
-        l->tail = node;
-    } else {
+    else
         l->tail->next = node;
-        l->tail = node;
-    }
 
+    l->tail = node;
     l->size++;
 }
 
@@ -34,15 +32,18 @@ void *list_remove(List *l, int index) {
         return NULL;
 
     ListNode *current = l->head;
-    for (int i = 0; i < index - 1; i++)
+    ListNode *prev = NULL;
+    for (int i = 0; i < index; i++) {
+        prev = current;
         current = current->next;
+    }
 
-    ListNode *to_remove = current->next;
-    current->next = to_remove->next;
+    if (prev == NULL) { // if remove first element
+        l->head = current->next;
+    }
 
-    void *value = to_remove->value;
-    free(to_remove->next);
-    free(to_remove);
+    void *value = current->value;
+    free(current);
     l->size--;
     return value;
 }
@@ -50,4 +51,5 @@ void *list_remove(List *l, int index) {
 void list_clear(List *l) {
     while (l->size > 0)
         free(list_remove(l, 0));
+    free(l);
 }
