@@ -6,8 +6,6 @@
 
 int **mulmr(double k, double **matrix, int n);
 
-Matrix get_undirected_matrix(Matrix m);
-
 int **create_matrix(int n);
 
 double **rand_matrix(int n);

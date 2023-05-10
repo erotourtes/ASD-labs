@@ -1,74 +1,66 @@
 #include <malloc.h>
-#include "Utils/queue.h"
-#include "matrix/matrix.h"
+#include <stdlib.h>
+#include "graph/graph.h"
 
-typedef struct {
-    int from;
-    int to;
-} Edge;
+void graph_to_matrix(Graph *g) {
+    int **m = (int **) malloc(g->size * sizeof(int *));
+    for (int i = 0; i < g->size; i++)
+        m[i] = (int *) calloc(g->size, sizeof(int));
 
-typedef struct {
-    Edge *val;
-    int count;
-} Edges;
-
-int *to_int(int val) {
-    int *int_val = malloc(sizeof(int));
-    *int_val = val;
-    return int_val;
-}
-
-int dfs_rec(Matrix m, int *visited, int prev_node, int current_node, Edge *edges, int current_edge_count) {
-    visited[current_node] = 1;
-
-    if (prev_node != -1) // if it is not the first node
-        edges[current_edge_count++] = (Edge){prev_node, current_node};
-
-    for (int i = 0; i < m.n; i++) {
-        if (m.val[current_node][i] && !visited[i]) {
-            current_edge_count = dfs_rec(m, visited, current_node, i, edges, current_edge_count);
+    List *values = graph_get_all_values(g);
+    for (int i = 0; i < g->size; i++) {
+        GraphNode *cur_node = list_get(values, i);
+        for (int j = 0; j < cur_node->edges->size; j++) {
+            GraphEdge *edge = (GraphEdge *) list_get(cur_node->edges, j);
+            m[edge->from][edge->to] = edge->weight;
         }
     }
 
-    edges[current_edge_count++] = (Edge) {current_node, current_node};
+    printf("Graph matrix:\n\n\n");
+    print_matrix((Matrix){m, g->size}, 1);
 
-    return current_edge_count;
+    free(values);
+    for (int i = 0; i < g->size; i++)
+        free(m[i]);
+    free(m);
 }
 
-Edges dfs(Matrix m, int start_node) {
-    Edge *edges = malloc(sizeof(Edge) * (m.n - 1 + m.n)); // max number of edges is n - 1; + n for setting visited
-    int *visited = calloc(m.n, sizeof(int));
-    int current_edge_count = 0;
-    int count = dfs_rec(m, visited, -1, start_node, edges, current_edge_count);
-    free(visited);
-    return (Edges){edges, count};
-}
+GraphEdge *minimum_edge(Graph spanning_tree, Graph original, const int *visited) {
+    GraphEdge *minimal = NULL;
+    List *values = graph_get_all_values(&spanning_tree);
+    for (int j = 0; j < spanning_tree.size; j++) {
+        GraphNode *cur_node = list_get(values, j);
+        GraphNode *node = graph_get_node(original, cur_node->value);
 
-Edges bfs(Matrix m, int start_node) {
-    Queue queue = get_queue(sizeof(int));
-    Edge *edges = malloc(sizeof(Edge) * (m.n - 1 + m.n)); // max number of edges is n - 1; + n for setting visited
-    int current_edge_count = 0;
-    int *visited = calloc(m.n, sizeof(int));
-
-    enqueue(&queue, to_int(start_node));
-    visited[start_node] = 1;
-    while (queue.size) {
-        int *node = (int *) dequeue(&queue);
-
-        for (int i = 0; i < m.n; i++) {
-            if (m.val[*node][i] && !visited[i]) {
-                edges[current_edge_count++] = (Edge){ *node, i };
-
-                enqueue(&queue, to_int(i));
-                visited[i] = 1;
-            }
+        for (int k = 0; k < node->edges->size; k++) {
+            GraphEdge *edge = (GraphEdge *) list_get(node->edges, k);
+            if (visited[edge->to] == 0 && (minimal == NULL || edge->weight < minimal->weight))
+                minimal = edge;
         }
-        edges[current_edge_count++] = (Edge){ *node, *node };
-        free(node);
     }
 
-    free_queue(&queue);
-    free(visited);
+    free(values);
+    return minimal;
+}
 
-    return (Edges){edges, current_edge_count};
+void minimum_spanning_tree(Graph original) {
+    Graph spanning_tree = init_graph();
+    int *visited = (int *) calloc(original.size, sizeof(int));
+
+    GraphNode *current = original.nodes->head->value;
+    visited[current->value] = 1;
+    graph_add_node(&spanning_tree, current->value, list_init());
+
+    for (int i = 0; i < original.size - 1; i++) {
+        GraphEdge *minimal = minimum_edge(spanning_tree, original, visited);
+
+        graph_add_node(&spanning_tree, minimal->to, list_init());
+        visited[minimal->to] = 1;
+        graph_create_edge(&spanning_tree, minimal->from, minimal->to, minimal->weight);
+    }
+
+//    graph_to_matrix(&spanning_tree);
+
+    free(visited);
+    free_graph(&spanning_tree);
 }

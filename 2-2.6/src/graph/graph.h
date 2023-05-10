@@ -28,4 +28,18 @@ Graph get_graph_from(Matrix m, Matrix weights);
 
 void free_graph(Graph *g);
 
+void graph_add_node(Graph *g, int value, List *edges);
+
+Graph init_graph();
+
+GraphEdge *graph_get_minimal_edge(GraphNode *node, const int *except);
+
+GraphNode* graph_get_node(Graph g, int value);
+
+List *graph_get_all_edges(Graph g);
+
+void graph_create_edge(Graph *g, int from, int to, int weight);
+
+List *graph_get_all_values(Graph *g);
+
 #endif //INC_2_2_5_GRAPH_H

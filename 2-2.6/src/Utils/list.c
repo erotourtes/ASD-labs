@@ -27,6 +27,17 @@ void list_add(List *l, void *value) {
     l->size++;
 }
 
+void *list_get(List *l, int index) {
+    if (index < 0 || index >= l->size)
+        return NULL;
+
+    ListNode *current = l->head;
+    for (int i = 0; i < index; i++)
+        current = current->next;
+
+    return current->value;
+}
+
 void *list_remove(List *l, int index) {
     if (index < 0 || index >= l->size)
         return NULL;
@@ -48,7 +59,7 @@ void *list_remove(List *l, int index) {
     return value;
 }
 
-void list_clear(List *l) {
+void free_list(List *l) {
     while (l->size > 0)
         free(list_remove(l, 0));
     free(l);

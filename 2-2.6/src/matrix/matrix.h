@@ -30,4 +30,6 @@ void set_to_zero(Matrix m);
 
 Matrix get_weights(Matrix A);
 
+Matrix get_undirected_matrix(Matrix m);
+
 #endif //INC_2_2_5_MATRIX_H
