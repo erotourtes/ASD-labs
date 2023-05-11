@@ -59,6 +59,13 @@ void *list_remove(List *l, int index) {
     return value;
 }
 
+ListNode *list_next(List *l) {
+    static ListNode *current = NULL;
+    if (current == NULL) current = l->head;
+    else current = current->next;
+    return current;
+}
+
 void free_list(List *l) {
     while (l->size > 0)
         free(list_remove(l, 0));

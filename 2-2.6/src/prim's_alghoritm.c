@@ -5,8 +5,9 @@
 
 GraphEdge *minimum_edge(Graph spanning_tree, Graph original, const int *visited) {
     GraphEdge *minimal = NULL;
-    for (int j = 0; j < spanning_tree.size; j++) {
-        GraphNode *cur_node = list_get(spanning_tree.nodes, j);
+    ListNode *cur_listNode = NULL;
+    while((cur_listNode = list_next(spanning_tree.nodes)) != NULL) { // Iterator in C
+        GraphNode *cur_node = cur_listNode->value;
         GraphNode *node = graph_get_node(original, cur_node->value);
 
         for (int k = 0; k < node->edges->size; k++) {
