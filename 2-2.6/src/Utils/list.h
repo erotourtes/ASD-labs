@@ -27,4 +27,6 @@ void free_list(List *l);
 
 void *list_get(List *l, int index);
 
+ListNode *list_next(List *l);
+
 #endif //INC_2_2_5_LIST_H

@@ -1,33 +1,7 @@
 #include <malloc.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include "graph/graph.h"
-
-void graph_to_matrix(Graph *g) {
-    int **m = (int **) malloc(g->size * sizeof(int *));
-    for (int i = 0; i < g->size; i++)
-        m[i] = (int *) calloc(g->size, sizeof(int));
-
-    for (int i = 0; i < g->size; i++) {
-        GraphNode *cur_node = list_get(g->nodes, i);
-        for (int j = 0; j < cur_node->edges->size; j++) {
-            GraphEdge *edge = (GraphEdge *) list_get(cur_node->edges, j);
-            m[edge->from][edge->to] = edge->weight;
-            m[edge->to][edge->from] = edge->weight;
-        }
-    }
-
-    printf("Graph matrix:\n\n\n");
-    for (int i = 0; i < g->size; i++) {
-        for (int j = 0; j < g->size; j++)
-            printf("%-2d ", m[i][j]);
-
-        printf("\n");
-    }
-
-    for (int i = 0; i < g->size; i++)
-        free(m[i]);
-    free(m);
-}
 
 GraphEdge *minimum_edge(Graph spanning_tree, Graph original, const int *visited) {
     GraphEdge *minimal = NULL;
@@ -45,7 +19,13 @@ GraphEdge *minimum_edge(Graph spanning_tree, Graph original, const int *visited)
     return minimal;
 }
 
-void minimum_spanning_tree(Graph original) {
+void halt(X11 app, Matrix original_matrix, Point *points, GraphEdge *minimal, int circle_radius) {
+    draw_graph_edge(app, original_matrix, points, *minimal, circle_radius);
+    scanf("%*c");
+    XFlush(app.dis);
+}
+
+void minimum_spanning_tree(X11 app, Point *points, Graph original, Matrix original_matrix, int circle_radius) {
     Graph spanning_tree = init_graph();
     int *visited = (int *) calloc(original.size, sizeof(int));
 
@@ -59,9 +39,9 @@ void minimum_spanning_tree(Graph original) {
         graph_add_node(&spanning_tree, minimal->to, list_init());
         visited[minimal->to] = 1;
         graph_create_edge(&spanning_tree, minimal->from, minimal->to, minimal->weight);
-    }
 
-    graph_to_matrix(&spanning_tree);
+        halt(app, original_matrix, points, minimal, circle_radius);
+    }
 
     free(visited);
     free_graph(&spanning_tree);

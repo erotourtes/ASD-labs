@@ -16,7 +16,7 @@
 Matrix set_right_matrix();
 
 int main() {
-    X11 app = init("Lab #3");
+    X11 app = init("Lab #6");
 
     XEvent event;
     KeySym key;
@@ -33,11 +33,6 @@ int main() {
 
     Matrix weights = get_weights(matrix);
     print_matrix(weights, 0);
-    Graph g = get_graph_from(matrix, weights);
-    minimum_spanning_tree(g);
-    free_graph(&g);
-
-    Matrix visited = init_matrix(matrix.n);
 
     while (1) {
         XNextEvent(app.dis, &event);
@@ -49,12 +44,18 @@ int main() {
         // KeyPress event
         if (event.type == KeyPress && XLookupString(&event.xkey, text, 255, &key, 0) == 1) {
             if (text[0] == 'q') break;
+            if (text[0] == 's') {
+                printf("Starting...\nPress <enter> button in the terminal emulator to continue\n");
+                Graph g = get_graph_from(matrix, weights);
+                minimum_spanning_tree(app, coordinates, g, matrix, circle_radius);
+                printf("Done!\n");
+                free_graph(&g);
+            }
         }
     }
 
     close_window(app);
     free_matrix(&matrix);
-    free_matrix(&visited);
     free(coordinates);
     free_matrix(&weights);
     printf("Bye!");

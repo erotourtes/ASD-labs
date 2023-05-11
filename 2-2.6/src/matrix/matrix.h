@@ -18,15 +18,7 @@ void print_matrix(Matrix matrix, int should_print_undirected);
 
 Matrix get_boolean_matrix(int n, double k, unsigned int seed);
 
-Matrix multiply_matrix(Matrix m1, Matrix m2);
-
 void add_matrix(Matrix target, Matrix matrix);
-
-void copy_matrix(Matrix target, Matrix matrix);
-
-void to_boolean_matrix(Matrix m);
-
-void set_to_zero(Matrix m);
 
 Matrix get_weights(Matrix A);
 

@@ -113,42 +113,10 @@ void print_matrix(Matrix matrix, int should_print_undirected) {
     free_matrix(&undirected);
 }
 
-Matrix multiply_matrix(const Matrix m1, const Matrix m2) {
-    Matrix new_matrix = init_matrix(m1.n);
-
-    for (int i = 0; i < m1.n; i++)
-        for (int j = 0; j < m1.n; j++)
-            for (int k = 0; k < m2.n; k++)
-                new_matrix.val[i][k] += m1.val[i][j] * m2.val[j][k];
-
-    return new_matrix;
-}
-
 void add_matrix(Matrix target, const Matrix matrix) {
     for (int i = 0; i < target.n; i++)
         for (int j = 0; j < target.n; j++)
             target.val[i][j] += matrix.val[i][j];
-}
-
-void copy_matrix(Matrix target, const Matrix matrix) {
-    for (int i = 0; i < target.n; i++)
-        for (int j = 0; j < target.n; j++)
-            target.val[i][j] = matrix.val[i][j];
-}
-
-void to_boolean_matrix(Matrix m) {
-    for (int i = 0; i < m.n; i++)
-        for (int j = 0; j < m.n; j++)
-            if (m.val[i][j] != 0)
-                m.val[i][j] = 1;
-}
-
-void set_to_zero(Matrix m) {
-    for (int i = 0; i < m.n; i++) {
-        for (int j = 0; j < m.n; j++) {
-            m.val[i][j] = 0;
-        }
-    }
 }
 
 void multiply_by_elements(Matrix target, Matrix m2) {
