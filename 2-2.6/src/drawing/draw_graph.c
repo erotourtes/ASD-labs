@@ -219,6 +219,22 @@ void draw_graph(X11 app, Matrix matrix, Matrix weights, Point *points, int is_di
     draw_nodes(app, points, matrix.n, circle_radius, bg, fg);
 }
 
+void draw_weight_count(X11 app, int minimal_weight) {
+    static int weight = 0;
+    u64 bg = 0xFFFFFF;
+    u64 fg = 0x000000;
+
+    XSetForeground(app.dis, app.gc, bg);
+    XFillRectangle(app.dis, app.win, app.gc, 0, 0, 200, 30);
+
+    char buf[30];
+    sprintf(buf, "Weight: %d + %d = %d", weight, minimal_weight, weight+ minimal_weight);
+    weight+=minimal_weight;
+
+    XSetForeground(app.dis, app.gc, fg);
+    XDrawString(app.dis, app.win, app.gc, 10, 20, buf, strlen(buf));
+}
+
 void draw_graph_edge(X11 app, Matrix m, Point *points, GraphEdge edge, int circle_radius) {
     u64 yellow = 0xF06449;
     u64 green = 0x29EEA9;

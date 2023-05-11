@@ -22,6 +22,7 @@ GraphEdge *minimum_edge(Graph spanning_tree, Graph original, const int *visited)
 
 void halt(X11 app, Matrix original_matrix, Point *points, GraphEdge *minimal, int circle_radius) {
     draw_graph_edge(app, original_matrix, points, *minimal, circle_radius);
+    draw_weight_count(app, minimal->weight);
     scanf("%*c");
     XFlush(app.dis);
 }

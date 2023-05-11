@@ -14,4 +14,6 @@ void draw_graph(X11 app, Matrix matrix, Matrix weights, Point *points, int is_di
 
 void draw_graph_edge(X11 app, Matrix m, Point *points, GraphEdge edge, int circle_radius);
 
+void draw_weight_count(X11 app, int minimal_weight);
+
 #endif //INC_2_2_5_DRAW_GRAPH_H
