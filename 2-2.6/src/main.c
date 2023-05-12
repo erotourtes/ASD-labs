@@ -47,8 +47,8 @@ int main() {
             if (text[0] == 's') {
                 printf("Starting...\nPress <enter> button in the terminal emulator to continue\n");
                 Graph g = get_graph_from(matrix, weights);
-                minimum_spanning_tree(app, coordinates, g, matrix, circle_radius);
-//                minimum_spanning_tree_optimised(app, coordinates, g, matrix, circle_radius);
+//                minimum_spanning_tree(app, coordinates, g, matrix, circle_radius);
+                minimum_spanning_tree_optimised(app, coordinates, g, matrix, circle_radius);
                 printf("Done!\n");
                 free_graph(&g);
             }

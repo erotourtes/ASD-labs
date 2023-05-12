@@ -1,6 +1,7 @@
 #include <malloc.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <stdint.h>
 #include "graph/graph.h"
 #include "Utils/MinHeap.h"
 
@@ -53,37 +54,64 @@ void minimum_spanning_tree(X11 app, Point *points, Graph original, Matrix origin
 }
 
 /* ========================================================================================
- * Below is optimised algorithm which uses MinHeap and have time complexity O((E+V)*log(V))
+ * Below is optimised algorithm but still is not optimal (O(log(V)(V+E)
  * ========================================================================================
  */
 
-int compare_nodes(void *a, void *b) {
-}
-
-void put_edges(GraphNode *node, MinHeap *heap) {
-    ListNode *edges = node->edges->head;
-
-    while ((edges = edges->next) != NULL) {
-        GraphEdge *edge = edges->value;
-        heap_add(heap, edge);
-    }
-}
-
-// app points original_matrix circle_radius needed for drawing and don't use in algorithm
 void
 minimum_spanning_tree_optimised(X11 app, Point *points, Graph original, Matrix original_matrix, int circle_radius) {
     Graph spanning_tree = init_graph();
     int *visited = (int *) calloc(original.size, sizeof(int));
-    MinHeap heap = heap_init(compare_nodes);
+    GraphNode **nodes = calloc(original.size, sizeof(GraphNode *));
+    GraphNode **parents = calloc(original.size, sizeof(GraphNode *));
+    int *weights = (int *) calloc(original.size, sizeof(int));
 
-    GraphNode *current = original.nodes->head->value;
-    visited[current->value] = 1;
-    graph_add_node(&spanning_tree, current->value, list_init());
-    put_edges(current, &heap);
+    // O(V)
+    for (int i = 0; i < original.size; i++) {
+        nodes[i] = graph_get_node(original, i);
+        weights[i] = i == 0 ? 0 : INT32_MAX;
+    }
 
-    while (heap.size != 0) {}
+    // O(V)
+    for (int i = 0; i < original.size; i++) {
+        // find min unvisited edge edge
+        // O(V)
+        int min = INT32_MAX;
+        int min_parent = -1;
+        for (int j = 0; j < original.size; j++) {
+            if (visited[j] == 0 && weights[j] < min) {
+                min = weights[j];
+                min_parent = j;
+            }
+        }
 
+        // set it visited
+        visited[min_parent] = 1;
+        GraphNode *parent = nodes[min_parent];
+
+        // update all neighbours
+        // O(E)
+        for (int j = 0; j < parent->edges->size; j++) {
+            GraphEdge *edge = (GraphEdge *) list_get(parent->edges, j);
+            if (visited[edge->to->value] == 0 && edge->weight < weights[edge->to->value]) {
+                parents[edge->to->value] = parent;
+                weights[edge->to->value] = edge->weight;
+            }
+        }
+
+        if (i == 0) continue;
+        GraphEdge *edge = malloc(sizeof(GraphEdge));
+        edge->from = parents[parent->value];
+        edge->to = parent;
+        edge->weight = weights[min_parent];
+        halt(app, original_matrix, points, edge, circle_radius);
+        free(edge);
+    }
+
+    // O(V) * (O(V) + O(E))
+    free(weights);
+    free(nodes);
+    free(parents);
     free_graph(&spanning_tree);
-    heap_free_heap_only(&heap);
     free(visited);
 }
