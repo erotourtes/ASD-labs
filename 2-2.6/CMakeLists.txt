@@ -15,6 +15,6 @@ add_library(drawing src/drawing/draw_graph.c src/drawing/draw_graph.h src/drawin
 
 file(GLOB SOURCES "src/*.c")
 
-add_executable(2_2_5 src/main.c)
-target_link_libraries(2_2_5 ${X11_LIBRARIES} m)
-target_link_libraries(2_2_5 app drawing matrix graph list)
+add_executable(2_2_6 src/main.c)
+target_link_libraries(2_2_6 ${X11_LIBRARIES} m)
+target_link_libraries(2_2_6 app drawing matrix graph list)

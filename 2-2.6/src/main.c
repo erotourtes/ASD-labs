@@ -68,7 +68,7 @@ Matrix set_right_matrix() {
     unsigned int seed = n1 * 1000 + n2 * 100 + n3 * 10 + n4;
     Matrix matrix = get_boolean_matrix(10 + n3, k, seed);
     Matrix m = get_undirected_matrix(matrix);
-    print_matrix(matrix, 0);
+    print_matrix(m, 0);
     free_matrix(&matrix);
 
     return m;

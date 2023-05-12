@@ -27,6 +27,7 @@ void halt(X11 app, Matrix original_matrix, Point *points, GraphEdge *minimal, in
     XFlush(app.dis);
 }
 
+// app points original_matrix circle_radius needed for drawing and don't use in algorithm
 void minimum_spanning_tree(X11 app, Point *points, Graph original, Matrix original_matrix, int circle_radius) {
     Graph spanning_tree = init_graph();
     int *visited = (int *) calloc(original.size, sizeof(int));
