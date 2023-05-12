@@ -9,7 +9,7 @@
 
 ---
 
-<details open><summary><h4>2.1</h4></summary>
+<details><summary><h4>2.1</h4></summary>
   
 ![woops smth went wrong](https://github.com/erotourtes/ASD-labs/blob/main/1-2.1/BinarySearchExample.png)
 
@@ -17,7 +17,7 @@
 
 ---
 
-<details open><summary><h4>2.2</h4></summary>
+<details><summary><h4>2.2</h4></summary>
   
 ![woops smth went wrong](https://github.com/erotourtes/ASD-labs/blob/main/1-2.2/InsertionSort.png)
 
@@ -27,7 +27,7 @@
 
 ### Second semester
 
-<details open><summary><h4>2.1</h4></summary>
+<details><summary><h4>2.1</h4></summary>
   
 ![woops smth went wrong](https://github.com/erotourtes/ASD-labs/blob/main/2-2.1/report/up.png)
 ![woops smth went wrong](https://github.com/erotourtes/ASD-labs/blob/main/2-2.1/report/down.png)
@@ -37,7 +37,7 @@
 
 ---
 
-<details open><summary><h4>2.2</h4></summary>
+<details><summary><h4>2.2</h4></summary>
   
 ![woops smth went wrong](https://github.com/erotourtes/ASD-labs/blob/main/2-2.2/report/report.png)
 
@@ -67,6 +67,14 @@
 > updated video
 
 [example_updated(1).webm](https://user-images.githubusercontent.com/67370189/235871917-ec9001be-0db3-45e0-9687-2096e73904a5.webm)
+
+</details>
+
+---
+
+<details open><summary><h4>2.6</h4></summary>
+  
+[example.webm](https://github.com/erotourtes/ASD-labs/assets/67370189/84deb579-c722-4b69-9273-459d5c42a837)
 
 </details>
 
