@@ -243,8 +243,10 @@ void draw_graph_edge(X11 app, Matrix m, Point *points, GraphEdge edge, int circl
     XSetLineAttributes(app.dis, app.gc, 7, LineSolid, CapButt, JoinMiter);
     XSetForeground(app.dis, app.gc, yellow);
     last_color = yellow;
-    draw_right_line(app, m, points, edge.from, edge.to, edge.weight, circle_radius, 0);
+    int from = edge.from->value;
+    int to = edge.to->value;
+    draw_right_line(app, m, points, from, to, edge.weight, circle_radius, 0);
     XSetLineAttributes(app.dis, app.gc, 2, LineSolid, CapButt, JoinMiter);
-    draw_node(app, points[edge.from], edge.from + 1, circle_radius, green, fg);
-    draw_node(app, points[edge.to], edge.to + 1, circle_radius, green, fg);
+    draw_node(app, points[from], from + 1, circle_radius, green, fg);
+    draw_node(app, points[to], to + 1, circle_radius, green, fg);
 }

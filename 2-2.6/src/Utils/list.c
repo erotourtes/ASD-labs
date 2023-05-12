@@ -61,7 +61,8 @@ void *list_remove(List *l, int index) {
 
 ListNode *list_next(List *l) {
     static ListNode *current = NULL;
-    if (current == NULL) current = l->head;
+    if (l == NULL) current = NULL;
+    else if (current == NULL) current = l->head;
     else current = current->next;
     return current;
 }

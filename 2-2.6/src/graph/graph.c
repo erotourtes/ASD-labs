@@ -4,6 +4,7 @@
 
 #include "graph.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 Graph init_graph() {
     Graph g = {list_init(), 0};
@@ -17,10 +18,12 @@ GraphNode *graph_create_node(int value, List *edges) {
     return node;
 }
 
-void graph_add_node(Graph *g, int value, List *edges) {
+GraphNode *graph_add_node(Graph *g, int value, List *edges) {
     GraphNode *node = graph_create_node(value, edges);
     list_add(g->nodes, node);
     g->size++;
+
+    return node;
 }
 
 GraphNode *graph_get_node(Graph g, int value) {
@@ -32,35 +35,40 @@ GraphNode *graph_get_node(Graph g, int value) {
     return NULL;
 }
 
-void graph_create_edge(Graph *g, int from, int to, int weight) {
-    GraphNode *node = graph_get_node(*g, from);
+void graph_create_edge(Graph *g, GraphNode *from, GraphNode *to, int weight) {
     GraphEdge *edge = (GraphEdge *) malloc(sizeof(GraphEdge));
     edge->from = from;
     edge->to = to;
     edge->weight = weight;
-    if (node->edges == NULL) node->edges = list_init();
-    list_add(node->edges, edge);
+    if (from->edges == NULL) from->edges = list_init();
+    list_add(from->edges, edge);
 }
 
 Graph get_graph_from(const Matrix m, const Matrix weights) {
     Graph g = {list_init(), 0};
 
+    for (int i = 0; i < m.n; i++)
+        list_add(g.nodes, graph_create_node(i, NULL));
+    g.size = g.nodes->size;
+
+    GraphNode *current = NULL;
     for (int i = 0; i < m.n; i++) {
+        current = list_next(g.nodes)->value;
         List *edges = list_init();
         for (int j = 0; j < m.n; j++) {
             if (m.val[i][j] != 1) continue;
             GraphEdge *edge = (GraphEdge *) malloc(sizeof(GraphEdge));
-            edge->from = i;
-            edge->to = j;
+            edge->from = current;
+
+            GraphNode *to = (GraphNode *) graph_get_node(g, j);
+            edge->to = to;
+
             edge->weight = weights.val[i][j];
             list_add(edges, edge);
         }
 
-        GraphNode *node = graph_create_node(i, edges);
-        list_add(g.nodes, node);
+        current->edges = edges;
     }
-
-    g.size = g.nodes->size;
 
     return g;
 }

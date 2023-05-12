@@ -9,15 +9,15 @@
 #define INC_2_2_5_GRAPH_H
 
 typedef struct {
-    int weight;
-    int from;
-    int to;
-} GraphEdge;
-
-typedef struct {
     List *edges;
     int value;
 } GraphNode;
+
+typedef struct {
+    int weight;
+    GraphNode *from;
+    GraphNode *to;
+} GraphEdge;
 
 typedef struct {
     List *nodes;
@@ -28,12 +28,12 @@ Graph get_graph_from(Matrix m, Matrix weights);
 
 void free_graph(Graph *g);
 
-void graph_add_node(Graph *g, int value, List *edges);
+GraphNode *graph_add_node(Graph *g, int value, List *edges);
 
 Graph init_graph();
 
-GraphNode* graph_get_node(Graph g, int value);
+GraphNode *graph_get_node(Graph g, int value);
 
-void graph_create_edge(Graph *g, int from, int to, int weight);
+void graph_create_edge(Graph *g, GraphNode *from, GraphNode *to, int weight);
 
 #endif //INC_2_2_5_GRAPH_H
