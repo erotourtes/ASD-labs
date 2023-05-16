@@ -90,7 +90,7 @@ minimum_spanning_tree_optimised(X11 app, Point *points, Graph original, Matrix o
         GraphNode *parent = nodes[min_parent];
 
         // update all neighbours
-        // O(E)
+        // overall with loop O(E) ?
         for (int j = 0; j < parent->edges->size; j++) {
             GraphEdge *edge = (GraphEdge *) list_get(parent->edges, j);
             if (visited[edge->to->value] == 0 && edge->weight < weights[edge->to->value]) {
@@ -108,10 +108,61 @@ minimum_spanning_tree_optimised(X11 app, Point *points, Graph original, Matrix o
         free(edge);
     }
 
-    // O(V) * (O(V) + O(E))
+    // O(V)^2 + O(E) ?
     free(weights);
     free(nodes);
     free(parents);
     free_graph(&spanning_tree);
     free(visited);
+}
+
+void MST(Graph original, Matrix original_matrix) {
+    int total_weight = 0;
+
+    // get all nodes as map
+    GraphNode **nodes = calloc(original.size, sizeof(GraphNode *));
+    ListNode *cur_list_node = original.nodes->head;
+    while (cur_list_node != NULL) {
+        GraphNode *cur = (GraphNode *) cur_list_node->value;
+        nodes[cur->value] = cur;
+        cur_list_node = cur_list_node->next;
+    }
+
+    int *visited = calloc(original.size, sizeof(int));
+
+    // Initialize heap with V capacity
+    MinHeap heap = heap_init(original.size);
+    heap_add(&heap, nodes[0], 0);
+    for (int i = 1; i < original.size; i++)
+        heap_add(&heap, nodes[i], INT32_MAX);
+
+    // O(V)
+    while (heap.size > 0) {
+        // O(log(V))
+        HeapNode min_node = heap_remove_min(&heap);
+        GraphNode *min = min_node.value;
+        visited[min->value] = 1;
+
+        printf("vertix: %d, weight: %d\n", min->value + 1, min_node.weight);
+        total_weight += min_node.weight;
+
+        ListNode *edges = min->edges->head;
+        // Overall (calculated with while loop) O(E) * O(log(V)), however my heap is not optimal so it's O(E*V) ?
+        while (edges != NULL) {
+            GraphEdge *cur_edge = (GraphEdge *) edges->value;
+
+            // O(log(V)
+            if (visited[cur_edge->to->value] == 0) {
+                // usually O(log(V)) but in this case O(V + Log(V)) = O(V)
+                heap_update_if_less(&heap, cur_edge->to, cur_edge->weight);
+            }
+            edges = edges->next;
+        }
+    }
+    // log(V) * V + O(E*V) = E * V (because of heap implementation) instead of log(V) * (E + V) = O(log(V)*E) ?
+
+    free(visited);
+    free(nodes);
+    heap_free_heap_only(&heap);
+    printf("%d\n", total_weight);
 }

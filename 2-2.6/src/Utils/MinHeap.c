@@ -11,30 +11,43 @@ void babble_up(MinHeap *heap, int child_index);
 
 void babble_down(MinHeap *heap, int parent);
 
-MinHeap heap_init(int (*compare)(void *a, void *b)) {
-    int capacity = 10;
-    void *values = calloc(capacity, sizeof(void *));
+MinHeap heap_init(int capacity) {
+    HeapNode *values = calloc(capacity, sizeof(HeapNode));
 
-    return (MinHeap) {values, compare, 0, capacity};
+    return (MinHeap) {values, 0, .capacity=capacity};
 }
 
-void heap_add(MinHeap *heap, void *value) {
+void heap_add(MinHeap *heap, void *value, int weight) {
     if (heap->size == heap->capacity) {
         heap->capacity *= 2;
         heap->values = realloc(heap->values, heap->capacity * sizeof(void *));
     }
 
-    heap->values[heap->size++] = value;
+    heap->values[heap->size++] = (HeapNode) {.value=value, weight};
     babble_up(heap, heap->size - 1);
 }
 
-void *heap_remove_min(MinHeap *heap) {
-    void *min = heap->values[0];
+HeapNode heap_remove_min(MinHeap *heap) {
+    HeapNode min = heap->values[0];
     heap->values[0] = heap->values[--heap->size];
 
     babble_down(heap, 0);
 
     return min;
+}
+
+void heap_update_if_less(MinHeap *heap, void *value, int weight) {
+    int i;
+    for (i = 0; i < heap->size; ++i)
+        if (heap->values[i].value== value)
+            break;
+
+    if (i == heap->size) return;
+    if (heap->values[i].weight <= weight) return;
+
+    heap->values[i].weight = weight;
+    babble_up(heap, i);
+    babble_down(heap, i);
 }
 
 void heap_free_heap_only(MinHeap *heap) {
@@ -45,17 +58,19 @@ void heap_free_heap_only(MinHeap *heap) {
 }
 
 void babble_down(MinHeap *heap, int parent) {
-    int left_child = parent * 2 + 1;
-    if (left_child > heap->size) return;
+    int left_child_index = parent * 2 + 1;
+    if (left_child_index > heap->size) return;
 
-    int right_child = parent * 2 + 2;
-    right_child = right_child >= heap->size ? left_child : right_child;
+    int right_child_index = parent * 2 + 2;
+    right_child_index = right_child_index >= heap->size ? left_child_index : right_child_index;
 
-    void *left_child_value = heap->values[left_child];
-    void *right_child_value = heap->values[right_child];
+    HeapNode left_child = heap->values[left_child_index];
+    HeapNode right_child = heap->values[right_child_index];
 
-    int min_child = left_child;
-    if (heap->compare(left_child_value, right_child_value) > 0) min_child = right_child;
+    if (left_child.weight > heap->values[parent].weight && right_child.weight > heap->values[parent].weight) return;
+
+    int min_child = left_child_index;
+    if (left_child.weight > right_child.weight) min_child = right_child_index;
 
     swap(heap, min_child, parent);
 
@@ -69,16 +84,16 @@ void babble_up(MinHeap *heap, int child_index) {
 
     int parent_index = (child_index - 1) / 2;
 
-    void* parent_value = heap->values[parent_index];
-    void* child_value = heap->values[child_index];
-    if (heap->compare(parent_value, child_value) > 0) return;
+    HeapNode parent_value = heap->values[parent_index];
+    HeapNode child_value = heap->values[child_index];
+    if (parent_value.weight < child_value.weight) return;
     swap(heap, parent_index, child_index);
 
     babble_up(heap, parent_index);
 }
 
 void swap(MinHeap *heap, int a, int b) {
-    void *tmp = heap->values[a];
+    HeapNode tmp = heap->values[a];
     heap->values[a] = heap->values[b];
     heap->values[b] = tmp;
 }

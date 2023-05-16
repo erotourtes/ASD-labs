@@ -52,6 +52,7 @@ Graph get_graph_from(const Matrix m, const Matrix weights) {
     g.size = g.nodes->size;
 
     GraphNode *current = NULL;
+    list_next(NULL);
     for (int i = 0; i < m.n; i++) {
         current = list_next(g.nodes)->value;
         List *edges = list_init();

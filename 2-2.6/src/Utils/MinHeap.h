@@ -7,21 +7,26 @@
 
 typedef struct MinHeap MinHeap;
 
-struct MinHeap {
-    void **values;
+typedef struct {
+    void *value;
+    int weight;
+} HeapNode;
 
-    int (*compare)(void *a, void *b);
+struct MinHeap {
+    HeapNode *values;
 
     int size;
     int capacity;
 };
 
-MinHeap heap_init(int (*compare)(void *a, void *b));
+MinHeap heap_init(int capacity);
 
-void heap_add(MinHeap *heap, void *value);
+void heap_add(MinHeap *heap, void *value, int weight);
 
-void *heap_remove_min(MinHeap *heap);
+HeapNode heap_remove_min(MinHeap *heap);
 
 void heap_free_heap_only(MinHeap *heap);
+
+void heap_update_if_less(MinHeap *heap, void *value, int weight);
 
 #endif //INC_2_2_6_MINHEAP_H
